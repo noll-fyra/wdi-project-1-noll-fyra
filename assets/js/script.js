@@ -1,3 +1,3 @@
 $(document).ready(function() {
-  window.alert('it works!')
+  // window.alert('it works!')
 })
