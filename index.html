@@ -8,10 +8,18 @@
 </head>
 
 <body>
-  <h1 id="score">10 : 10</h1>
+  <h1 id="score">5 : 5</h1>
+  <div id="start-game">
+    <p>Monsters chase the closest player. Use this to your advantage.</p>
+    <button type="button" name="start" id="start">Start the game?</button>
+  </div>
+
   <canvas id="canvas" width="768" height="576"></canvas>
-  <button type="button" name="restart" id="restart">One more round?</button>
-  <h1 id="game-name">NO ONE WINS</h1>
+
+  <div id="game-over">
+    <button type="button" name="restart" id="restart">One more round?</button>
+  </div>
+  <h1 id="game-name">Player 1 wins!</h1>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
   <script src="assets/js/script.js" charset="utf-8"></script>

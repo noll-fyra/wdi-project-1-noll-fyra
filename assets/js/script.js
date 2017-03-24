@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  var gameName = 'NO ONE WINS'
+  var gameName = 'Player 1 wins!'
 
   // get the canvas context for drawing
   var canvas = document.getElementById('canvas')
@@ -10,11 +10,23 @@ $(document).ready(function () {
   var spriteHeight = 32
 
   var keysPressed = {}
+  var then = Date.now()
+
+  $('#start').on('click', function () {
+    startGame()
+  })
 
 // general game variables
   var isGameOver = false
   var refreshCounter = 0
   $('#game-name').text(gameName)
+
+// background object
+  function Background (sprite, x, y) {
+    this.image = createImage(sprite)
+    this.x = x
+    this.y = y
+  }
 
 // player object
   function Player (sprite, x, y) {
@@ -64,6 +76,10 @@ $(document).ready(function () {
     var margin = window.innerHeight * 0.1
     width = canvas.width
     height = canvas.height
+    $('#start-game').css('width', width + 'px')
+    $('#start-game').css('height', height + 'px')
+    $('#game-over').css('width', width + 'px')
+    $('#game-over').css('height', height + 'px')
     $('body').css('margin', '0px, ' + margin + 'px auto')
     $('h1').css('height', margin + 'px')
   }
@@ -77,6 +93,8 @@ $(document).ready(function () {
       image.src = 'assets/images/antihero.png'
     } else if (sprite === 'monster') {
       image.src = 'assets/images/monster.png'
+    } else if (sprite === 'background') {
+      image.src = 'assets/images/background.png'
     }
     if (image) {
       return image
@@ -85,15 +103,19 @@ $(document).ready(function () {
     }
   }
 
+  // create the background
+  var background = new Background('background', 0, 0)
+
   // create the players
   var pArray = []
-  var p1 = new Player('player', 0, 0)
-  var p2 = new Player('antihero', width - spriteWidth, height - spriteHeight)
+  var p1 = new Player('player', width / 3, height / 3)
+  var p2 = new Player('antihero', width * 2 / 3, height * 2 / 3)
   pArray.push(p1)
   pArray.push(p2)
 
 // create the monsters
   var monsterArray = []
+
   function createMonster () {
     var monster = new Monster(randomSpawn()[0], randomSpawn()[1], randomSpeed())
     monsterArray.push(monster)
@@ -102,10 +124,23 @@ $(document).ready(function () {
   createMonster()
   createMonster()
   createMonster()
+  createMonster()
+  createMonster()
+  createMonster()
+  createMonster()
 
-  // randomise where the monsters spawn
+  // randomise where the monsters spawn along the edges - top right bottom left
   function randomSpawn () {
-    return [spriteWidth * 4 + (Math.random() * (width - spriteWidth * 8)), spriteHeight * 4 + (Math.random() * (height - spriteHeight * 8))]
+    switch (monsterArray.length % 4) {
+      case 0:
+        return [Math.floor(Math.random() * width) - spriteWidth, 0]
+      case 1:
+        return [width - spriteWidth, Math.floor(Math.random() * height) - spriteHeight]
+      case 2:
+        return [Math.floor(Math.random() * width) - spriteWidth, height - spriteHeight]
+      default:
+        return [0, Math.floor(Math.random() * height) - spriteHeight]
+    }
   }
 
   // randomise the monsters' speeds
@@ -125,12 +160,12 @@ $(document).ready(function () {
   }
 
 // check if the player is caught
-  function catchTheHero (play, mon) {
-    if (play.x <= (mon.x + spriteWidth) && mon.x <= (play.x + spriteWidth) && play.y <= (mon.y + spriteHeight) && mon.y <= (play.y + spriteHeight)) {
-      play.lives--
-      play.hit = true
+  function catchTheHero (player, mon) {
+    if (player.x <= (mon.x + spriteWidth) && mon.x <= (player.x + spriteWidth) && player.y <= (mon.y + spriteHeight) && mon.y <= (player.y + spriteHeight)) {
+      player.lives--
+      player.hit = true
       mon.hit = true
-      if (play.lives > 0) {
+      if (player.lives > 0) {
         reset()
       } else {
         isGameOver = true
@@ -178,13 +213,18 @@ $(document).ready(function () {
     })
 
     $('#score').text(p1.lives + ' : ' + p2.lives)
+
+    background.x -= 1
+    if (background.x < -2048) {
+      background.x = 0
+    }
   }
 
   // go to game over screen
   function gameOverScreen () {
     context.clearRect(0, 0, width, height)
     $('canvas').hide()
-    $('#restart').show()
+    $('#game-over').show()
     if (p1.hit) {
       $('h1').text('Player 2 wins!')
     } else {
@@ -204,7 +244,7 @@ $(document).ready(function () {
         monsterArray.forEach(function (monster) {
           if (monster.hit) {
             monster.x = randomSpawn()[0]
-            monster.x = randomSpawn()[1]
+            monster.y = randomSpawn()[1]
             monster.hit = false
           }
         })
@@ -229,7 +269,7 @@ $(document).ready(function () {
 
   // restart the game
   $('#restart').on('click', function () {
-    $(this).hide()
+    $('#game-over').hide()
     $('canvas').show()
     reset()
     runMainGame()
@@ -246,8 +286,11 @@ $(document).ready(function () {
   // draw everything
   function render () {
     refreshCounter++
-
     context.clearRect(0, 0, width, height)
+
+    context.drawImage(background.image, background.x, background.y)
+    context.drawImage(background.image, background.x + width, background.y)
+
     pArray.forEach(function (player) {
       context.drawImage(player.image, player.x, player.y)
     })
@@ -264,7 +307,8 @@ $(document).ready(function () {
     moveSpritesAndCheckCollisions(delta / 1000)
     render()
 
-    if (refreshCounter % 600 === 0) {
+    if (refreshCounter % 150 === 0) {
+      createMonster()
       createMonster()
     }
 
@@ -277,7 +321,11 @@ $(document).ready(function () {
     }
   }
 
-  var then = Date.now()
-  reset()
-  runMainGame()
+  function startGame () {
+    $('#start-game').hide()
+    $('canvas').show()
+    then = Date.now()
+    reset()
+    runMainGame()
+  }
 })
