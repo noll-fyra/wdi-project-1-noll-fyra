@@ -1,27 +1,50 @@
 $(document).ready(function () {
   var gameName = 'NO ONE WINS'
+
   // get the canvas context for drawing
   var canvas = document.getElementById('canvas')
   var context = canvas.getContext('2d')
   var width = 0
   var height = 0
+  var spriteWidth = 32
+  var spriteHeight = 32
 
   var keysPressed = {}
 
 // general game variables
-  var p1Score = 3
-  var p2Score = 3
+  var p1Lives = 3
+  var p2Lives = 3
   var p1Hit = false
   var p2Hit = false
   var isGameOver = false
   var refreshCounter = 0
-  $('#score').text(p1Score + ' : ' + p2Score)
+  $('#score').text(p1Lives + ' : ' + p2Lives)
   $('#game-name').text(gameName)
 
-// player variables
+// player object
+  function Player (sprite, x, y) {
+    this.image = createImage(sprite)
+    this.lives = 3
+    this.hit = false
+    this.speed = 192
+    this.x = x
+    this.y = y
+  }
 
 // monster variables
   var monsterSpeedModifier = 0.02
+
+  function Monster (x, y) {
+    this.image = createImage('monster')
+    this.speedModifier = 0.02
+    this.x = x
+    this.y = y
+  }
+
+  Monster.prototype.updatePosition = function () {
+    this.x += chaseTheHero(p1.x, p1.y, p2.x, p2.y, this.x, this.y)[0]
+    this.y += chaseTheHero(p1.x, p1.y, p2.x, p2.y, this.x, this.y)[1]
+  }
 
   resizeCanvas()
 
@@ -38,8 +61,6 @@ $(document).ready(function () {
 
   window.addEventListener('orientationchange', resizeCanvas, false)
 
-
-
   // resize the canvas if necessary
   function resizeCanvas () {
     canvas.width = window.innerWidth * 0.8
@@ -51,44 +72,54 @@ $(document).ready(function () {
     $('h1').css('height', margin + 'px')
   }
 
-// ensure the hero and monster images are loaded before drawing
-  var isP1Ready = false
-  var p1Img = document.createElement('img')
-  p1Img.src = 'assets/images/hero.png'
-  p1Img.onload = function () {
-    isP1Ready = true
-  }
-
-  var isP2Ready = false
-  var p2Img = document.createElement('img')
-  p2Img.src = 'assets/images/antihero.png'
-  p2Img.onload = function () {
-    isP2Ready = true
-  }
-
-  var isMonsterReady = false
-  var monsterImg = document.createElement('img')
-  monsterImg.src = 'assets/images/monster.png'
-  monsterImg.onload = function () {
-    isMonsterReady = true
-  }
-
-  var isMonster2Ready = false
-  var monster2Img = document.createElement('img')
-  monster2Img.src = 'assets/images/monster.png'
-  monster2Img.onload = function () {
-    isMonster2Ready = true
-  }
-
-  function createImage () {
-    var monster = document.createElement('img')
-    monster.src = 'assets/images/monster.png'
-    if (monster) {
-      return monster
+  // create the images
+  function createImage (sprite) {
+    var image = document.createElement('img')
+    if (sprite === 'player') {
+      image.src = 'assets/images/hero.png'
+    } else if (sprite === 'antihero') {
+      image.src = 'assets/images/antihero.png'
+    } else if (sprite === 'monster') {
+      image.src = 'assets/images/monster.png'
+    }
+    if (image) {
+      return image
     } else {
-      console.log('monster not created')
+      console.log(sprite + 'not created')
     }
   }
+
+  // create the players
+  var pArray = []
+  var p1 = new Player('player', 0, 0)
+  var p2 = new Player('antihero', width - spriteWidth, height - spriteHeight)
+  pArray.push(p1)
+  pArray.push(p2)
+
+// create the monsters
+  var monsterArray = []
+  var monster = new Monster(0, height - spriteHeight)
+  var monster2 = new Monster(width - spriteWidth, 0)
+  var monster3 = new Monster(width / 3, height / 3)
+  var monster4 = new Monster(width * 2 / 3, height * 2 / 3)
+  monsterArray.push(monster)
+  monsterArray.push(monster2)
+  monsterArray.push(monster3)
+  monsterArray.push(monster4)
+
+  // var isMonsterReady = false
+  // var monsterImg = document.createElement('img')
+  // monsterImg.src = 'assets/images/monster.png'
+  // monsterImg.onload = function () {
+  //   isMonsterReady = true
+  // }
+  //
+  // var isMonster2Ready = false
+  // var monster2Img = document.createElement('img')
+  // monster2Img.src = 'assets/images/monster.png'
+  // monster2Img.onload = function () {
+  //   isMonster2Ready = true
+  // }
 
   function monsterHorde () {
     // monsterHordeReady.append(false)
@@ -102,50 +133,29 @@ $(document).ready(function () {
     }
   }
 
-// use this!!!!
-
-
-// create the heroes and monster
-  var p1 = {
-    speed: 192,
-    x: 0,
-    y: 0
+// make the monsters chase the nearest player
+  function chaseTheHero (p1x, p1y, p2x, p2y, monsterx, monstery) {
+    var p1xDistance = Math.abs(p1x - monsterx)
+    var p1yDistance = Math.abs(p1y - monstery)
+    var p1Hypotenuse = Math.sqrt(Math.pow(p1xDistance, 2) + Math.pow(p1yDistance, 2))
+    var p2xDistance = Math.abs(p2x - monsterx)
+    var p2yDistance = Math.abs(p2y - monstery)
+    var p2Hypotenuse = Math.sqrt(Math.pow(p2xDistance, 2) + Math.pow(p2yDistance, 2))
+    return (p1Hypotenuse >= p2Hypotenuse ? [(p2x - monsterx) * monsterSpeedModifier, (p2y - monstery) * monsterSpeedModifier] : [(p1x - monsterx) * monsterSpeedModifier, (p1y - monstery) * monsterSpeedModifier])
   }
 
-  var p2 = {
-    speed: 192,
-    x: width - 32,
-    y: height - 32
-  }
-
-  function chaseTheHero (herox, monsterx, heroy, monstery) {
-    return [(herox - monsterx) * monsterSpeedModifier, (heroy - monstery) * monsterSpeedModifier]
-  }
-
-
-
-  var monObj = {
-    image: createImage(),
-    x: width / 2,
-    y: height / 2,
-    update: function () {
-      this.x += chaseTheHero(p1.x, this.x, p1.y, this.y)[0]
-      this.y += chaseTheHero(p1.x, this.x, p1.y, this.y)[1]
+// check if the player is caught
+  function catchTheHero (play, mon) {
+    if (play.x <= (mon.x + spriteWidth) && mon.x <= (play.x + spriteWidth) && play.y <= (mon.y + spriteHeight) && mon.y <= (play.y + spriteHeight)) {
+      play.lives--
+      play.hit = true
+      if (play.lives > 0) {
+        reset()
+      } else {
+        isGameOver = true
+      }
     }
   }
-
-  var monster = {
-    x: 0,
-    y: height - 32
-  }
-
-  var monster2 = {
-    x: width - 32,
-    y: 0
-  }
-
-
-
 
   // go to game over screen
   function gameOverScreen () {
@@ -167,36 +177,36 @@ $(document).ready(function () {
         p1.y = 0
         p1Hit = false
         monster.x = 0
-        monster.y = height - 32
+        monster.y = height - spriteWidth
       } else if (p2Hit) {
-        p2.x = width - 32
-        p2.y = height - 32
+        p2.x = width - spriteWidth
+        p2.y = height - spriteHeight
         p2Hit = false
-        monster2.x = width - 32
+        monster2.x = width - spriteWidth
         monster2.y = 0
       }
     } else {
-      p1Score = 3
-      p2Score = 3
+      p1Lives = 3
+      p2Lives = 3
       p1Hit = false
       p2Hit = false
       isGameOver = false
       refreshCounter = 0
-      $('#score').text(p1Score + ' : ' + p2Score)
+      $('#score').text(p1Lives + ' : ' + p2Lives)
       $('#game-name').text(gameName)
 
       p1.x = 0
       p1.y = 0
 
-      p2.x = width - 32
-      p2.y = height - 32
+      p2.x = width - spriteWidth
+      p2.y = height - spriteHeight
 
       monster.x = 0
-      monster.y = height - 32
-      monster2.x = width - 32
+      monster.y = height - spriteHeight
+      monster2.x = width - spriteWidth
       monster2.y = 0
-      monObj.x = width / 2
-      monObj.y = height / 2
+      // monObj.x = width / 2
+      // monObj.y = height / 2
 
       // monster.x = 32 + (Math.random() * (width - 64))
       // monster.y = 32 + (Math.random() * (height - 64))
@@ -206,22 +216,20 @@ $(document).ready(function () {
   }
 
   // restart the game
-    $('#restart').on('click', function () {
-      $(this).hide()
-      $('canvas').show()
-      reset()
-      runMainGame()
-    })
+  $('#restart').on('click', function () {
+    $(this).hide()
+    $('canvas').show()
+    reset()
+    runMainGame()
+  })
 
-    $('#restart').on('mouseenter', function () {
-      $(this).text('Let\'s go!')
-    })
+  $('#restart').on('mouseenter', function () {
+    $(this).text('Let\'s go!')
+  })
 
-    $('#restart').on('mouseleave', function () {
-      $(this).text('One more round?')
-    })
-
-
+  $('#restart').on('mouseleave', function () {
+    $(this).text('One more round?')
+  })
 
   // move players on key presses
   function movePlayers (modifier) {
@@ -229,49 +237,48 @@ $(document).ready(function () {
     if (87 in keysPressed && p1.y > 0) {
       p1.y -= p1.speed * modifier
     }
-    if (83 in keysPressed && p1.y < canvas.height - 32) { // Player holding down
+    if (83 in keysPressed && p1.y < canvas.height - spriteHeight) { // Player holding down
       p1.y += p1.speed * modifier
     }
     if (65 in keysPressed && p1.x > 0) { // Player holding left
       p1.x -= p1.speed * modifier
     }
-    if (68 in keysPressed && p1.x < canvas.width - 32) { // Player holding right
+    if (68 in keysPressed && p1.x < canvas.width - spriteWidth) { // Player holding right
       p1.x += p1.speed * modifier
     }
 // player 2 arrow keys
     if (38 in keysPressed && p2.y > 0) {
       p2.y -= p2.speed * modifier
     }
-    if (40 in keysPressed && p2.y < canvas.height - 32) { // Player holding down
+    if (40 in keysPressed && p2.y < canvas.height - spriteHeight) { // Player holding down
       p2.y += p2.speed * modifier
     }
     if (37 in keysPressed && p2.x > 0) { // Player holding left
       p2.x -= p2.speed * modifier
     }
-    if (39 in keysPressed && p2.x < canvas.width - 32) { // Player holding right
+    if (39 in keysPressed && p2.x < canvas.width - spriteWidth) { // Player holding right
       p2.x += p2.speed * modifier
     }
-    monObj.update()
-    monster.x += chaseTheHero(p1.x, monster.x, p1.y, monster.y)[0]
-    monster.y += chaseTheHero(p1.x, monster.x, p1.y, monster.y)[1]
-    monster2.x += chaseTheHero(p2.x, monster2.x, p2.y, monster2.y)[0]
-    monster2.y += chaseTheHero(p2.x, monster2.x, p2.y, monster2.y)[1]
+
+    monsterArray.forEach(function (mon) {
+      mon.updatePosition()
+    })
 
 // check for collision event
-    if (p1.x <= (monster.x + 32) && monster.x <= (p1.x + 32) && p1.y <= (monster.y + 32) && monster.y <= (p1.y + 32)) {
-      p1Score--
+    if (p1.x <= (monster.x + spriteWidth) && monster.x <= (p1.x + spriteWidth) && p1.y <= (monster.y + spriteHeight) && monster.y <= (p1.y + spriteHeight)) {
+      p1Lives--
       p1Hit = true
-      if (p1Score > 0) {
+      if (p1Lives > 0) {
         reset()
       } else {
         isGameOver = true
       }
     }
 
-    if (p2.x <= (monster2.x + 32) && monster2.x <= (p2.x + 32) && p2.y <= (monster2.y + 32) && monster2.y <= (p2.y + 32)) {
-      p2Score--
+    if (p2.x <= (monster2.x + spriteWidth) && monster2.x <= (p2.x + spriteWidth) && p2.y <= (monster2.y + spriteHeight) && monster2.y <= (p2.y + spriteHeight)) {
+      p2Lives--
       p2Hit = true
-      if (p2Score > 0) {
+      if (p2Lives > 0) {
         reset()
       } else {
         isGameOver = true
@@ -284,24 +291,32 @@ $(document).ready(function () {
     refreshCounter++
 
     context.clearRect(0, 0, width, height)
-    if (isP1Ready) {
-      context.drawImage(p1Img, p1.x, p1.y)
-    }
-    if (isP2Ready) {
-      context.drawImage(p2Img, p2.x, p2.y)
-    }
+    // if (isP1Ready) {
+    context.drawImage(p1.image, p1.x, p1.y)
+    // }
+    // if (isP2Ready) {
+    context.drawImage(p2.image, p2.x, p2.y)
+    // }
 
-    if (isMonsterReady) {
-      context.drawImage(monsterImg, monster.x, monster.y)
-    }
+    context.drawImage(monster.image, monster.x, monster.y)
+    context.drawImage(monster2.image, monster2.x, monster2.y)
+    context.drawImage(monster3.image, monster3.x, monster3.y)
+    context.drawImage(monster4.image, monster4.x, monster4.y)
+    // monsterArray.forEach(function (mon) {
+    //   context.drawImage(mon.image, mon.x, mon.y)
+    // }
 
-    if (isMonster2Ready) {
-      context.drawImage(monsterImg, monster2.x, monster2.y)
-    }
+    // if (isMonsterReady) {
+    //   context.drawImage(monsterImg, monster.x, monster.y)
+    // }
+    //
+    // if (isMonster2Ready) {
+    //   context.drawImage(monsterImg, monster2.x, monster2.y)
+    // }
 
-    context.drawImage(monObj.image, monObj.x, monObj.y)
+    // context.drawImage(monObj.image, monObj.x, monObj.y)
 
-    $('#score').text(p1Score + ' : ' + p2Score)
+    $('#score').text(p1Lives + ' : ' + p2Lives)
   }
 
   var runMainGame = function () {
