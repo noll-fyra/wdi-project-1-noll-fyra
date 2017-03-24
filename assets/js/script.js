@@ -94,18 +94,14 @@ $(document).ready(function () {
 
 // create the monsters
   var monsterArray = []
-  // function createMonster() {
-  //   var monster = new Monster(randomSpawn()[0], randomSpawn()[1], randomSpeed())
-  //   monsterArray.push(monster)
-  // }
-  var monster = new Monster(randomSpawn()[0], randomSpawn()[1], randomSpeed())
-  var monster2 = new Monster(randomSpawn()[0], randomSpawn()[1], randomSpeed())
-  var monster3 = new Monster(randomSpawn()[0], randomSpawn()[1], randomSpeed())
-  var monster4 = new Monster(randomSpawn()[0], randomSpawn()[1], randomSpeed())
-  monsterArray.push(monster)
-  monsterArray.push(monster2)
-  monsterArray.push(monster3)
-  monsterArray.push(monster4)
+  function createMonster () {
+    var monster = new Monster(randomSpawn()[0], randomSpawn()[1], randomSpeed())
+    monsterArray.push(monster)
+  }
+  createMonster()
+  createMonster()
+  createMonster()
+  createMonster()
 
   // randomise where the monsters spawn
   function randomSpawn () {
@@ -140,6 +136,48 @@ $(document).ready(function () {
         isGameOver = true
       }
     }
+  }
+
+  // move players and monster and check collisions
+  function moveSpritesAndCheckCollisions (modifier) {
+  // player 1 wasd
+    if (87 in keysPressed && p1.y > 0) {
+      p1.y -= p1.speed * modifier
+    }
+    if (83 in keysPressed && p1.y < canvas.height - spriteHeight) {
+      p1.y += p1.speed * modifier
+    }
+    if (65 in keysPressed && p1.x > 0) {
+      p1.x -= p1.speed * modifier
+    }
+    if (68 in keysPressed && p1.x < canvas.width - spriteWidth) {
+      p1.x += p1.speed * modifier
+    }
+  // player 2 arrow keys
+    if (38 in keysPressed && p2.y > 0) {
+      p2.y -= p2.speed * modifier
+    }
+    if (40 in keysPressed && p2.y < canvas.height - spriteHeight) {
+      p2.y += p2.speed * modifier
+    }
+    if (37 in keysPressed && p2.x > 0) {
+      p2.x -= p2.speed * modifier
+    }
+    if (39 in keysPressed && p2.x < canvas.width - spriteWidth) {
+      p2.x += p2.speed * modifier
+    }
+
+    monsterArray.forEach(function (mon) {
+      mon.updatePosition()
+    })
+
+    pArray.forEach(function (player) {
+      monsterArray.forEach(function (monster) {
+        catchTheHero(player, monster)
+      })
+    })
+
+    $('#score').text(p1.lives + ' : ' + p2.lives)
   }
 
   // go to game over screen
@@ -205,63 +243,18 @@ $(document).ready(function () {
     $(this).text('One more round?')
   })
 
-  // move players on key presses
-  function moveSpritesAndCheckCollisions (modifier) {
-  // player 1 wasd
-    if (87 in keysPressed && p1.y > 0) {
-      p1.y -= p1.speed * modifier
-    }
-    if (83 in keysPressed && p1.y < canvas.height - spriteHeight) {
-      p1.y += p1.speed * modifier
-    }
-    if (65 in keysPressed && p1.x > 0) {
-      p1.x -= p1.speed * modifier
-    }
-    if (68 in keysPressed && p1.x < canvas.width - spriteWidth) {
-      p1.x += p1.speed * modifier
-    }
-// player 2 arrow keys
-    if (38 in keysPressed && p2.y > 0) {
-      p2.y -= p2.speed * modifier
-    }
-    if (40 in keysPressed && p2.y < canvas.height - spriteHeight) {
-      p2.y += p2.speed * modifier
-    }
-    if (37 in keysPressed && p2.x > 0) {
-      p2.x -= p2.speed * modifier
-    }
-    if (39 in keysPressed && p2.x < canvas.width - spriteWidth) {
-      p2.x += p2.speed * modifier
-    }
-
-    monsterArray.forEach(function (mon) {
-      mon.updatePosition()
-    })
-
-    pArray.forEach(function (player) {
-      monsterArray.forEach(function (monster) {
-        catchTheHero(player, monster)
-      })
-    })
-
-    $('#score').text(p1.lives + ' : ' + p2.lives)
-  }
-
   // draw everything
   function render () {
     refreshCounter++
 
     context.clearRect(0, 0, width, height)
-    context.drawImage(p1.image, p1.x, p1.y)
-    context.drawImage(p2.image, p2.x, p2.y)
+    pArray.forEach(function (player) {
+      context.drawImage(player.image, player.x, player.y)
+    })
 
-    context.drawImage(monster.image, monster.x, monster.y)
-    context.drawImage(monster2.image, monster2.x, monster2.y)
-    context.drawImage(monster3.image, monster3.x, monster3.y)
-    context.drawImage(monster4.image, monster4.x, monster4.y)
-    // monsterArray.forEach(function (mon) {
-    //   context.drawImage(mon.image, mon.x, mon.y)
-    // }
+    monsterArray.forEach(function (mon) {
+      context.drawImage(mon.image, mon.x, mon.y)
+    })
   }
 
   var runMainGame = function () {
@@ -270,6 +263,10 @@ $(document).ready(function () {
 
     moveSpritesAndCheckCollisions(delta / 1000)
     render()
+
+    if (refreshCounter % 600 === 0) {
+      createMonster()
+    }
 
     then = now
 
