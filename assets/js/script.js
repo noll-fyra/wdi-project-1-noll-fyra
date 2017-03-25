@@ -1,6 +1,4 @@
 $(document).ready(function () {
-  var gameName = 'Player 1 wins!'
-
   // get the canvas context for drawing
   var canvas = document.getElementById('canvas')
   var context = canvas.getContext('2d')
@@ -17,9 +15,9 @@ $(document).ready(function () {
   })
 
 // general game variables
+  var hasGameStarted = false
   var isGameOver = false
   var refreshCounter = 0
-  $('#game-name').text(gameName)
 
 // background object
   function Background (sprite, x, y) {
@@ -78,6 +76,9 @@ $(document).ready(function () {
     height = canvas.height
     $('#start-game').css('width', width + 'px')
     $('#start-game').css('height', height + 'px')
+    $('#p1Canvas').css('width', width + 'px')
+    $('#p1Canvas').css('height', height / 2 * 0.5 + 'px')
+
     $('#game-over').css('width', width + 'px')
     $('#game-over').css('height', height + 'px')
     $('body').css('margin', '0px, ' + margin + 'px auto')
@@ -93,8 +94,6 @@ $(document).ready(function () {
       image.src = 'assets/images/antihero.png'
     } else if (sprite === 'monster') {
       image.src = 'assets/images/monster.png'
-    } else if (sprite === 'background') {
-      image.src = 'assets/images/background.png'
     }
     if (image) {
       return image
@@ -104,12 +103,12 @@ $(document).ready(function () {
   }
 
   // create the background
-  var background = new Background('background', 0, 0)
+  // var background = new Background('background', 0, 0)
 
   // create the players
   var pArray = []
-  var p1 = new Player('player', width / 3, height / 3)
-  var p2 = new Player('antihero', width * 2 / 3, height * 2 / 3)
+  var p1 = new Player('player', width / 3, height / 2)
+  var p2 = new Player('antihero', width * 2 / 3, height / 2)
   pArray.push(p1)
   pArray.push(p2)
 
@@ -213,11 +212,6 @@ $(document).ready(function () {
     })
 
     $('#score').text(p1.lives + ' : ' + p2.lives)
-
-    background.x -= 1
-    if (background.x < -2048) {
-      background.x = 0
-    }
   }
 
   // go to game over screen
@@ -260,10 +254,18 @@ $(document).ready(function () {
         monster.x = randomSpawn()[0]
         monster.y = randomSpawn()[1]
         monster.hit = false
+        monsterArray = []
+        createMonster()
+        createMonster()
+        createMonster()
+        createMonster()
+        createMonster()
+        createMonster()
+        createMonster()
+        createMonster()
       })
       isGameOver = false
       refreshCounter = 0
-      $('#game-name').text(gameName)
     }
   }
 
@@ -287,9 +289,6 @@ $(document).ready(function () {
   function render () {
     refreshCounter++
     context.clearRect(0, 0, width, height)
-
-    context.drawImage(background.image, background.x, background.y)
-    context.drawImage(background.image, background.x + width, background.y)
 
     pArray.forEach(function (player) {
       context.drawImage(player.image, player.x, player.y)
@@ -322,6 +321,7 @@ $(document).ready(function () {
   }
 
   function startGame () {
+    hasGameStarted = true
     $('#start-game').hide()
     $('canvas').show()
     then = Date.now()
