@@ -17,55 +17,9 @@ $(document).ready(function () {
   var isGameOver = false
   var refreshCounter = 0
 
-// background object
-  // function Background (sprite, x, y) {
-  //   this.image = createImage(sprite)
-  //   this.x = x
-  //   this.y = y
-  // }
-
-// player object
-  function Player (sprite, x, y) {
-    this.image = createImage(sprite)
-    this.lives = 5
-    this.hit = false
-    this.speed = 192
-    this.startingx = x
-    this.startingy = y
-    this.x = x
-    this.y = y
-    this.isInvulnerable = true
-    this.invulnerableTimer = 120
-    // placeholder
-    this.abilityCharge = 3
-  }
-
-  Player.prototype.checkIfInvulnerable = function () {
-    if (this.invulnerableTimer > 0) {
-      this.invulnerableTimer--
-      this.isInvulnerable = true
-    }
-    if (this.invulnerableTimer <= 0) {
-      this.isInvulnerable = false
-    }
-  }
-
-// monster object
-  function Monster (x, y, speed) {
-    this.image = createImage('monster')
-    this.hit = false
-    this.speedModifier = speed
-    this.x = x
-    this.y = y
-  }
-
-  Monster.prototype.updatePosition = function () {
-    this.x += chaseTheHero(p1.x, p1.y, p2.x, p2.y, this.x, this.y, this.speedModifier)[0]
-    this.y += chaseTheHero(p1.x, p1.y, p2.x, p2.y, this.x, this.y, this.speedModifier)[1]
-  }
-
   resizeCanvas()
 
+// animate the player choosing screen
   function checkConfirm (player, status) {
     if (status) {
       $('#' + player).css('background-color', 'rgba(255,255,255,0.2)')
@@ -169,15 +123,72 @@ $(document).ready(function () {
     var margin = window.innerHeight * 0.1
     width = canvas.width
     height = canvas.height
+    // make the 3 screens the same dimensions as the canvas
     $('#start-game').css('width', width + 'px')
     $('#start-game').css('height', height + 'px')
-    $('#p1Canvas').css('width', width + 'px')
-    $('#p1Canvas').css('height', height / 2 * 0.5 + 'px')
-
+    $('#load-game').css('width', width + 'px')
+    $('#load-game').css('height', height + 'px')
     $('#game-over').css('width', width + 'px')
     $('#game-over').css('height', height + 'px')
     $('body').css('margin', '0px, ' + margin + 'px auto')
     $('h1').css('height', margin + 'px')
+  }
+
+// background object
+  // function Background (sprite, x, y) {
+  //   this.image = createImage(sprite)
+  //   this.x = x
+  //   this.y = y
+  // }
+
+// player objects
+  function Player (sprite, x, y) {
+    this.image = createImage(sprite)
+    this.lives = 5
+    this.hit = false
+    this.speed = 192
+    this.startingx = x
+    this.startingy = y
+    this.x = x
+    this.y = y
+    this.isInvulnerable = true
+    this.invulnerableTimer = 120
+    // placeholder
+    this.abilityCharge = 3
+  }
+
+  Player.prototype.checkIfInvulnerable = function () {
+    if (this.invulnerableTimer > 0) {
+      this.invulnerableTimer--
+      this.isInvulnerable = true
+    }
+    if (this.invulnerableTimer <= 0) {
+      this.isInvulnerable = false
+    }
+  }
+
+// monster objects
+  function Monster (x, y, speed) {
+    this.image = createImage('monster')
+    this.hit = false
+    this.speedModifier = speed
+    this.x = x
+    this.y = y
+  }
+
+  Monster.prototype.updatePosition = function () {
+    this.x += chaseTheHero(p1.x, p1.y, p2.x, p2.y, this.x, this.y, this.speedModifier)[0]
+    this.y += chaseTheHero(p1.x, p1.y, p2.x, p2.y, this.x, this.y, this.speedModifier)[1]
+  }
+
+  // obstacle objects
+  function Obstacle (xLeft, yTop, width, height) {
+    this.xLeft = xLeft
+    this.yTop = yTop
+    this.xRight = xLeft + width
+    this.yBottom = yTop + height
+    this.width = width
+    this.height = height
   }
 
   // create the images
@@ -208,14 +219,13 @@ $(document).ready(function () {
     var monster = new Monster(randomSpawn()[0], randomSpawn()[1], randomSpeed())
     monsterArray.push(monster)
   }
-  createMonster()
-  createMonster()
-  createMonster()
-  createMonster()
-  createMonster()
-  createMonster()
-  createMonster()
-  createMonster()
+  //monspawn
+  // for (var i = 0; i < 8; i++) {
+  //   createMonster()
+  // }
+
+  // create the obstacles
+  var testObstacle = new Obstacle(64, 64, 32, 100)
 
   // randomise where the monsters spawn along the edges - top right bottom left
   function randomSpawn () {
@@ -233,7 +243,7 @@ $(document).ready(function () {
 
   // randomise the monsters' speeds
   function randomSpeed () {
-    return 0.01 + Math.floor(Math.random() * 2) / 120
+    return 0.01 + Math.floor(Math.random() * 4) / 120
   }
 
 // make the monsters chase the nearest player
@@ -265,20 +275,59 @@ $(document).ready(function () {
     }
   }
 
-  // move players and monster and check collisions
-  function moveSpritesAndCheckCollisions (modifier) {
+  // check if an obstacle is in the way
+  // TL = top left, TR = top right, BL = bottom left, BR = bottom right
+  // returns [canMoveUp?, canMoveDown?, canMoveLeft?, canMoveRight?]
+  // function obstacleBlock (player, obs) {
+  //   var canMove = []
+  //   player.x + spriteWidth <= obs.xLeft || player.x >= obs.xRight || player.y + spriteHeight <= obs.yTop || player.y >= obs.yBottom ? canMove.push(true) : canMove.push(false)
+  //   player.x + spriteWidth <= obs.xLeft || player.x >= obs.xRight || player.y + spriteHeight <= obs.yTop || player.y >= obs.yBottom ? canMove.push(true) : canMove.push(false)
+  //   player.x >= obs.xRight || player.x + spriteWidth <= obs.xLeft || player.y <= obs.yTop || player.y >= obs.yBottom ? canMove.push(true) : canMove.push(false)
+  //   player.x >= obs.xRight || player.x + spriteWidth <= obs.xLeft || player.y + spriteHeight <= obs.yTop || player.y >= obs.yBottom ? canMove.push(true) : canMove.push(false)
+  //   return canMove
+  // }
+  function obstacleBlock (player, obs) {
+    return player.x < obs.xRight && player.x + spriteWidth > obs.xLeft && player.y + spriteHeight > obs.yTop && player.y < obs.yBottom
+  }
+
+// original obstacle check failed -> workaround - redraw player sprite if it runs into an obstacle
+// x: 0 = left, 1 = right; y: 0 = top, 1 = bottom
+  function shiftPlayer (player, obs) {
+    var minX = Math.abs(player.x - obs.xRight) > Math.abs((player.x + spriteWidth) - obs.xLeft) ? obs.xLeft - spriteWidth : obs.xRight
+    var minY = Math.abs(player.y - obs.yBottom) > Math.abs((player.y + spriteHeight) - obs.yTop) ? obs.yTop - spriteHeight : obs.yBottom
+    return [minX, minY]
+  }
+
+  // move players and monsters, check collisions and update the score
+  function moveSpritesCheckCollisionsUpdateScore (modifier) {
   // player 1 wasd
     if (87 in keysPressed && p1.y > 0) {
       p1.y -= p1.speed * modifier
+      if (obstacleBlock(p1, testObstacle)) {
+          p1.y = shiftPlayer(p1, testObstacle)[1]
+      }
     }
     if (83 in keysPressed && p1.y < canvas.height - spriteHeight) {
       p1.y += p1.speed * modifier
+      if (obstacleBlock(p1, testObstacle)) {
+          p1.y = shiftPlayer(p1, testObstacle)[1]
+      // console.log(obstacleBlock(p1, testObstacle))
+
+      }
     }
     if (65 in keysPressed && p1.x > 0) {
       p1.x -= p1.speed * modifier
+      if (obstacleBlock(p1, testObstacle)) {
+      // console.log(obstacleBlock(p1, testObstacle))
+        p1.x = shiftPlayer(p1, testObstacle)[0]
+    }
     }
     if (68 in keysPressed && p1.x < canvas.width - spriteWidth) {
       p1.x += p1.speed * modifier
+      if (obstacleBlock(p1, testObstacle)) {
+      // console.log(obstacleBlock(p1, testObstacle))
+        p1.x = shiftPlayer(p1, testObstacle)[0]
+    }
     }
   // player 2 arrow keys
     if (38 in keysPressed && p2.y > 0) {
@@ -308,6 +357,35 @@ $(document).ready(function () {
     $('#score').text(p1.lives + ' : ' + p2.lives)
   }
 
+// show the loading screen between the landing page and the game
+  function loadGame () {
+    var countdown = 2
+    $('#start-game').hide()
+    $('#load-game').show()
+    var interval = window.setInterval(function () {
+      $('#countdown').text(countdown)
+      countdown--
+    }, 1000)
+
+    function showCanvas () {
+      window.clearInterval(interval)
+      startGame()
+    }
+    window.setTimeout(showCanvas, 3000)
+  }
+
+  // start the game
+  function startGame () {
+    resizeCanvas()
+    hasGameStarted = true
+    $('#start-game').hide()
+    $('#load-game').hide()
+    $('canvas').show()
+    then = Date.now()
+    reset()
+    runMainGame()
+  }
+
   // go to game over screen
   function gameOverScreen () {
     context.clearRect(0, 0, width, height)
@@ -320,7 +398,7 @@ $(document).ready(function () {
     }
   }
 
-  // reset the game on player hit or when game is over
+  // reset the game when a player is hit or when game is over
   function reset () {
     if (!isGameOver) {
       pArray.forEach(function (player) {
@@ -343,6 +421,7 @@ $(document).ready(function () {
         })
       })
     } else {
+      // reset player
       pArray.forEach(function (player) {
         player.lives = 5
         player.x = player.startingx
@@ -351,20 +430,17 @@ $(document).ready(function () {
         player.invulnerableTimer = 120
         player.isInvulnerable = true
       })
+      // reset monsters
       monsterArray.forEach(function (monster) {
         monster.x = randomSpawn()[0]
         monster.y = randomSpawn()[1]
         monster.hit = false
         monsterArray = []
-        createMonster()
-        createMonster()
-        createMonster()
-        createMonster()
-        createMonster()
-        createMonster()
-        createMonster()
-        createMonster()
+        for (var i = 0; i < 8; i++) {
+          createMonster()
+        }
       })
+      // reset game variables
       p1confirmed = false
       p2confirmed = false
       hasGameStarted = false
@@ -390,6 +466,7 @@ $(document).ready(function () {
     $(this).text('Play again?')
   })
 
+// return to landing page
   $('#back-to-start-game').on('click', function () {
     p1confirmed = false
     checkConfirm('p1', p1confirmed)
@@ -417,26 +494,32 @@ $(document).ready(function () {
         context.lineWidth = 2
         context.strokeStyle = 'grey'
         context.stroke()
-        // context.endPath()
       }
     })
 
     monsterArray.forEach(function (mon) {
       context.drawImage(mon.image, mon.x, mon.y)
     })
+
+    context.beginPath()
+    context.rect(testObstacle.xLeft, testObstacle.yTop, testObstacle.width, testObstacle.height)
+    context.fill()
   }
 
+// main game loop
   var runMainGame = function () {
     var now = Date.now()
     var delta = now - then
 
-    moveSpritesAndCheckCollisions(delta / 1000)
+    moveSpritesCheckCollisionsUpdateScore(delta / 1000)
     render()
 
-    if (refreshCounter % 150 === 0) {
-      createMonster()
-      createMonster()
-    }
+//monspawn
+// add more monsters every 2.5s
+    // if (refreshCounter % 150 === 0) {
+    //   createMonster()
+    //   createMonster()
+    // }
 
     then = now
 
@@ -444,32 +527,6 @@ $(document).ready(function () {
       window.requestAnimationFrame(runMainGame)
     } else {
       window.requestAnimationFrame(gameOverScreen)
-    }
-  }
-
-  function startGame () {
-    resizeCanvas()
-    hasGameStarted = true
-    $('#start-game').hide()
-    $('#load-game').hide()
-    $('canvas').show()
-    then = Date.now()
-    reset()
-    runMainGame()
-  }
-
-  function loadGame () {
-    var countdown = 2
-    $('#start-game').hide()
-    $('#load-game').show()
-    var interval = window.setInterval(function () {
-      $('#countdown').text(countdown)
-      countdown--
-    }, 1000)
-    window.setTimeout(showCanvas, 3000)
-    function showCanvas () {
-      window.clearInterval(interval)
-      startGame()
     }
   }
 })
