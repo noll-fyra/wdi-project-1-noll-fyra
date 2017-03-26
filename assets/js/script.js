@@ -10,11 +10,9 @@ $(document).ready(function () {
   var keysPressed = {}
   var then = Date.now()
 
-  $('#start').on('click', function () {
-    startGame()
-  })
-
 // general game variables
+  var p1confirmed = false
+  var p2confirmed = false
   var hasGameStarted = false
   var isGameOver = false
   var refreshCounter = 0
@@ -38,6 +36,8 @@ $(document).ready(function () {
     this.y = y
     this.isInvulnerable = true
     this.invulnerableTimer = 120
+    // placeholder
+    this.abilityCharge = 3
   }
 
   Player.prototype.checkIfInvulnerable = function () {
@@ -66,7 +66,38 @@ $(document).ready(function () {
 
   resizeCanvas()
 
-// add keyboard and window state change eventListeners
+  function checkConfirm (player, status) {
+    if (status) {
+      $('#' + player).css('background-color', 'rgba(255,255,255,0.2)')
+      $('#' + player + 'confirm').css('animation', 'steady-confirm')
+      $('#' + player + 'confirm').css('background-color', '#FFFFFF')
+      $('#' + player + 'confirm').css('color', '#8a0707')
+      $('#' + player + 'up').text('')
+      $('#' + player + 'down').text('')
+      $('#' + player + 'left').text('')
+      $('#' + player + 'right').text('')
+      $('#' + player + 'confirm').text('Ready!')
+    } else {
+      $('#' + player + 'confirm').css('animation', 'blink-confirm 2s infinite')
+      $('#' + player).css('background-color', 'rgba(0,0,0,0.2)')
+      $('#' + player + 'confirm').css('color', '#FFFFFF')
+      if (player === 'p1') {
+        $('#' + player + 'up').text('W')
+        $('#' + player + 'down').text('S')
+        $('#' + player + 'left').text('A')
+        $('#' + player + 'right').text('D')
+        $('#' + player + 'confirm').text('Press [ spacebar ] to confirm')
+      } else if (player === 'p2') {
+        $('#' + player + 'up').text('⇧')
+        $('#' + player + 'down').text('⇩')
+        $('#' + player + 'left').text('⇦')
+        $('#' + player + 'right').text('⇨')
+        $('#' + player + 'confirm').text('Press [ enter ] to confirm')
+      }
+    }
+  }
+
+// add keyboard eventListeners for start-game screen
   window.addEventListener('keydown', function (e) {
     keysPressed[e.keyCode] = true
     if (!hasGameStarted) {
@@ -86,6 +117,20 @@ $(document).ready(function () {
         $('#p2up').css('background-color', '#8a0707')
       } else if (e.keyCode === 40) {
         $('#p2down').css('background-color', '#8a0707')
+      } else if (e.keyCode === 32) {
+        p1confirmed = !p1confirmed
+        checkConfirm('p1', p1confirmed)
+      } else if (e.keyCode === 13) {
+        p2confirmed = !p2confirmed
+        checkConfirm('p2', p2confirmed)
+      }
+
+      if (p1confirmed && p2confirmed) {
+        window.setTimeout(function () {
+          loadGame()
+        }, 1200)
+        $('#start-game').css('opacity', '0.0')
+        $('#start-game').css('transition', 'opacity 1.5s')
       }
     }
   }, false)
@@ -269,9 +314,9 @@ $(document).ready(function () {
     $('canvas').hide()
     $('#game-over').show()
     if (p1.hit) {
-      $('h1').text('Player 2 wins!')
+      $('#score').text('Player 2 wins!')
     } else {
-      $('h1').text('Player 1 wins!')
+      $('#score').text('Player 1 wins!')
     }
   }
 
@@ -320,6 +365,9 @@ $(document).ready(function () {
         createMonster()
         createMonster()
       })
+      p1confirmed = false
+      p2confirmed = false
+      hasGameStarted = false
       isGameOver = false
       refreshCounter = 0
     }
@@ -329,7 +377,7 @@ $(document).ready(function () {
   $('#restart').on('click', function () {
     $('#game-over').hide()
     $('canvas').show()
-    $('h1').text('')
+    $('#score').text('')
     reset()
     runMainGame()
   })
@@ -343,9 +391,17 @@ $(document).ready(function () {
   })
 
   $('#back-to-start-game').on('click', function () {
+    p1confirmed = false
+    checkConfirm('p1', p1confirmed)
+    p2confirmed = false
+    checkConfirm('p2', p2confirmed)
+    hasGameStarted = false
+    // isGameOver = false
+    $('#start-game').css('opacity', '1.0')
     $('#game-over').hide()
     $('#start-game').show()
-    $('h1').text('')
+    $('#score').text('')
+    $('#countdown').text('3')
   })
 
   // draw everything
@@ -395,9 +451,25 @@ $(document).ready(function () {
     resizeCanvas()
     hasGameStarted = true
     $('#start-game').hide()
+    $('#load-game').hide()
     $('canvas').show()
     then = Date.now()
     reset()
     runMainGame()
+  }
+
+  function loadGame () {
+    var countdown = 2
+    $('#start-game').hide()
+    $('#load-game').show()
+    var interval = window.setInterval(function () {
+      $('#countdown').text(countdown)
+      countdown--
+    }, 1000)
+    window.setTimeout(showCanvas, 3000)
+    function showCanvas () {
+      window.clearInterval(interval)
+      startGame()
+    }
   }
 })

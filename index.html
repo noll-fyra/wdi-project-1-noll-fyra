@@ -1,10 +1,9 @@
-"
 <!DOCTYPE html>
 <html>
 
 <head>
   <meta charset="utf-8">
-  <title>Game 1</title>
+  <title>POPULATION: ONE</title>
   <link href="https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="assets/css/stylesheet.css">
 </head>
@@ -14,10 +13,9 @@
     <h1 id="score"></h1>
   </div>
   <div id="start-game">
-    <!-- <p>top space</p> -->
     <span class="title">POPULATION: <span id="one">ONE</span></span>
     <div id="explanation">
-      <span class="story">A zombie apocalypse has left the human race with two survivors.&nbsp;&nbsp;&nbsp;<span id="be-the-last">Be the last.</span></span>
+      <span class="story">A zombie apocalypse has left the human race with only two survivors.&nbsp;&nbsp;&nbsp;<span id="be-the-last">Be the last.</span></span>
     </div>
     <div class="choose-player">
       <div id="p1" class="player">
@@ -53,7 +51,7 @@
         </div>
         <div class="change">
           <div id="p1left" class='changeKey'>A</div>
-          <div class='changeKey'>WASD keys to move</div>
+          <div id="p1confirm" class='changeKey'>Press [ spacebar ] to choose me</div>
           <div id="p1right" class='changeKey'>D</div>
         </div>
         <div class="change">
@@ -93,9 +91,9 @@
           <div></div>
         </div>
         <div class="change">
-          <div id="p2left" class='changeKey '>&#x21E6;</div>
-          <div class='changeKey '>Arrow keys to move</div>
-          <div id="p2right" class='changeKey '>&#x21E8;</div>
+          <div id="p2left" class='changeKey'>&#x21E6;</div>
+          <div id="p2confirm" class='changeKey'>Press [ enter ] to choose me</div>
+          <div id="p2right" class='changeKey'>&#x21E8;</div>
         </div>
         <div class="change">
           <div></div>
@@ -104,10 +102,12 @@
         </div>
       </div>
     </div>
-    <div class="button">
-      <button type="button" name="start" id="start">Run from the approaching horde!</button>
-    </div>
   </div>
+  </div>
+
+  <div id="load-game">
+    <h1>The ravenous horde approaches in...</h1>
+    <h1 id="countdown">3</h1>
   </div>
 
   <div class="canvas-container">

@@ -22,6 +22,11 @@ div {
   /*background-color: white;*/
 }
 
+#load-game {
+  display: none;
+  align-content: center;
+}
+
 #game-over {
   display: none;
 }
@@ -143,6 +148,40 @@ h1 {
 .changeKey {
   width: 33.33%;
   height: 100%;
+}
+
+@keyframes blink-confirm {
+  0% {
+    background-color: #8a0707;
+  }
+  50% {
+    background-color: rgba(0, 0, 0, 0);
+  }
+  100% {
+    background-color: #8a0707;
+  }
+}
+
+@keyframes steady-confirm {
+  0% {
+    background-color: rgba(0, 0, 0, 0);
+  }
+  100% {
+    background-color: rgba(0, 0, 0, 0);
+  }
+}
+
+#p1confirm, #p2confirm {
+  animation: blink-confirm 2s infinite;
+}
+
+.confirm-false {}
+
+.confirm-true {
+  background-color: rgba(255, 255, 255, 0.2);
+  animation: steady-confirm infinite;
+  background-color: #FFFFFF;
+  color: #8a0707;
 }
 
 ul {
