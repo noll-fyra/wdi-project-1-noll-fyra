@@ -20,11 +20,11 @@ $(document).ready(function () {
   var refreshCounter = 0
 
 // background object
-  function Background (sprite, x, y) {
-    this.image = createImage(sprite)
-    this.x = x
-    this.y = y
-  }
+  // function Background (sprite, x, y) {
+  //   this.image = createImage(sprite)
+  //   this.x = x
+  //   this.y = y
+  // }
 
 // player object
   function Player (sprite, x, y) {
@@ -36,6 +36,18 @@ $(document).ready(function () {
     this.startingy = y
     this.x = x
     this.y = y
+    this.isInvulnerable = true
+    this.invulnerableTimer = 120
+  }
+
+  Player.prototype.checkIfInvulnerable = function () {
+    if (this.invulnerableTimer > 0) {
+      this.invulnerableTimer--
+      this.isInvulnerable = true
+    }
+    if (this.invulnerableTimer <= 0) {
+      this.isInvulnerable = false
+    }
   }
 
 // monster object
@@ -57,10 +69,48 @@ $(document).ready(function () {
 // add keyboard and window state change eventListeners
   window.addEventListener('keydown', function (e) {
     keysPressed[e.keyCode] = true
+    if (!hasGameStarted) {
+      if (e.keyCode === 65) {
+        $('#p1left').css('background-color', '#8a0707')
+      } else if (e.keyCode === 68) {
+        $('#p1right').css('background-color', '#8a0707')
+      } else if (e.keyCode === 87) {
+        $('#p1up').css('background-color', '#8a0707')
+      } else if (e.keyCode === 83) {
+        $('#p1down').css('background-color', '#8a0707')
+      } else if (e.keyCode === 37) {
+        $('#p2left').css('background-color', '#8a0707')
+      } else if (e.keyCode === 39) {
+        $('#p2right').css('background-color', '#8a0707')
+      } else if (e.keyCode === 38) {
+        $('#p2up').css('background-color', '#8a0707')
+      } else if (e.keyCode === 40) {
+        $('#p2down').css('background-color', '#8a0707')
+      }
+    }
   }, false)
 
   window.addEventListener('keyup', function (e) {
     delete keysPressed[e.keyCode]
+    if (!hasGameStarted) {
+      if (e.keyCode === 65) {
+        $('#p1left').css('background-color', '')
+      } else if (e.keyCode === 68) {
+        $('#p1right').css('background-color', '')
+      } else if (e.keyCode === 87) {
+        $('#p1up').css('background-color', '')
+      } else if (e.keyCode === 83) {
+        $('#p1down').css('background-color', '')
+      } else if (e.keyCode === 37) {
+        $('#p2left').css('background-color', '')
+      } else if (e.keyCode === 39) {
+        $('#p2right').css('background-color', '')
+      } else if (e.keyCode === 38) {
+        $('#p2up').css('background-color', '')
+      } else if (e.keyCode === 40) {
+        $('#p2down').css('background-color', '')
+      }
+    }
   }, false)
 
   window.addEventListener('resize', resizeCanvas, false)
@@ -87,18 +137,12 @@ $(document).ready(function () {
 
   // create the images
   function createImage (sprite) {
-    var image = document.createElement('img')
     if (sprite === 'player') {
-      image.src = 'assets/images/hero.png'
+      return document.querySelector('#hero')
     } else if (sprite === 'antihero') {
-      image.src = 'assets/images/antihero.png'
+      return document.querySelector('#antihero')
     } else if (sprite === 'monster') {
-      image.src = 'assets/images/monster.png'
-    }
-    if (image) {
-      return image
-    } else {
-      console.log(sprite + 'not created')
+      return document.querySelector('#monster')
     }
   }
 
@@ -144,7 +188,7 @@ $(document).ready(function () {
 
   // randomise the monsters' speeds
   function randomSpeed () {
-    return 0.01 + Math.floor(Math.random() * 2) / 100
+    return 0.01 + Math.floor(Math.random() * 2) / 120
   }
 
 // make the monsters chase the nearest player
@@ -161,13 +205,17 @@ $(document).ready(function () {
 // check if the player is caught
   function catchTheHero (player, mon) {
     if (player.x <= (mon.x + spriteWidth) && mon.x <= (player.x + spriteWidth) && player.y <= (mon.y + spriteHeight) && mon.y <= (player.y + spriteHeight)) {
-      player.lives--
-      player.hit = true
-      mon.hit = true
-      if (player.lives > 0) {
-        reset()
+      if (player.isInvulnerable) {
+        return
       } else {
-        isGameOver = true
+        player.lives--
+        player.hit = true
+        mon.hit = true
+        if (player.lives > 0) {
+          reset()
+        } else {
+          isGameOver = true
+        }
       }
     }
   }
@@ -206,6 +254,7 @@ $(document).ready(function () {
     })
 
     pArray.forEach(function (player) {
+      player.checkIfInvulnerable()
       monsterArray.forEach(function (monster) {
         catchTheHero(player, monster)
       })
@@ -231,9 +280,14 @@ $(document).ready(function () {
     if (!isGameOver) {
       pArray.forEach(function (player) {
         if (player.hit) {
-          player.x = player.startingx
-          player.y = player.startingy
+          $('body').css('background-color', '#8a0707')
+          $('body').css('transition', 'background-color 0.5s linear')
+          setTimeout(function () {
+            $('body').css('background-color', '#484349')
+          }, 500)
           player.hit = false
+          player.invulnerableTimer = 120
+          player.isInvulnerable = true
         }
         monsterArray.forEach(function (monster) {
           if (monster.hit) {
@@ -249,6 +303,8 @@ $(document).ready(function () {
         player.x = player.startingx
         player.y = player.startingy
         player.hit = false
+        player.invulnerableTimer = 120
+        player.isInvulnerable = true
       })
       monsterArray.forEach(function (monster) {
         monster.x = randomSpawn()[0]
@@ -273,16 +329,23 @@ $(document).ready(function () {
   $('#restart').on('click', function () {
     $('#game-over').hide()
     $('canvas').show()
+    $('h1').text('')
     reset()
     runMainGame()
   })
 
   $('#restart').on('mouseenter', function () {
-    $(this).text('Let\'s go!')
+    $(this).text('Yes! I want to finish last!')
   })
 
   $('#restart').on('mouseleave', function () {
-    $(this).text('One more round?')
+    $(this).text('Play again?')
+  })
+
+  $('#back-to-start-game').on('click', function () {
+    $('#game-over').hide()
+    $('#start-game').show()
+    $('h1').text('')
   })
 
   // draw everything
@@ -292,6 +355,14 @@ $(document).ready(function () {
 
     pArray.forEach(function (player) {
       context.drawImage(player.image, player.x, player.y)
+      if (player.isInvulnerable) {
+        context.beginPath()
+        context.arc(player.x + 16, player.y + 16, 22.5, 0, 2 * Math.PI)
+        context.lineWidth = 2
+        context.strokeStyle = 'grey'
+        context.stroke()
+        // context.endPath()
+      }
     })
 
     monsterArray.forEach(function (mon) {
@@ -321,6 +392,7 @@ $(document).ready(function () {
   }
 
   function startGame () {
+    resizeCanvas()
     hasGameStarted = true
     $('#start-game').hide()
     $('canvas').show()

@@ -46,6 +46,21 @@
             </ul>
           </div>
         </div>
+        <div class="change">
+          <div></div>
+          <div id="p1up" class='changeKey'>W</div>
+          <div></div>
+        </div>
+        <div class="change">
+          <div id="p1left" class='changeKey'>A</div>
+          <div class='changeKey'>WASD keys to move</div>
+          <div id="p1right" class='changeKey'>D</div>
+        </div>
+        <div class="change">
+          <div></div>
+          <div id="p1down" class='changeKey'>S</div>
+          <div></div>
+        </div>
       </div>
       <div class="player-divider"></div>
       <div id="p2" class="player">
@@ -72,6 +87,21 @@
             </ul>
           </div>
         </div>
+        <div class="change">
+          <div></div>
+          <div id="p2up" class='changeKey'>&#x21E7;</div>
+          <div></div>
+        </div>
+        <div class="change">
+          <div id="p2left" class='changeKey '>&#x21E6;</div>
+          <div class='changeKey '>Arrow keys to move</div>
+          <div id="p2right" class='changeKey '>&#x21E8;</div>
+        </div>
+        <div class="change">
+          <div></div>
+          <div id="p2down" class='changeKey'>&#x21E9;</div>
+          <div></div>
+        </div>
       </div>
     </div>
     <div class="button">
@@ -81,12 +111,16 @@
   </div>
 
   <div class="canvas-container">
-    <canvas id="canvas" width="768" height="576"></canvas>
+    <canvas id="canvas" width="768" height="576">Your browser does not support HTML canvas at this time, which is required for this game.</canvas>
+    <img id="hero" src="assets/images/hero.png" alt="hero.png">
+    <img id="antihero" src="assets/images/antihero.png" alt="antihero.png">
+    <img id="monster" src="assets/images/monster.png" alt="monster.png">
   </div>
 
 
   <div id="game-over">
-    <button type="button" name="restart" id="restart">One more round?</button>
+    <button type="button" name="restart" id="restart">Play again?</button>
+    <button type="button" name="back-to-start-game" id="back-to-start-game">Change characters</button>
   </div>
   <div>
     <h1 id="game-name"></h1>

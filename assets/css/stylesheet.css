@@ -98,7 +98,7 @@ h1 {
 .player-name {
   justify-content: flex-end;
   width: 100%;
-  height: 15%;
+  height: 16%;
   font-size: 20px;
   color: white;
 }
@@ -106,7 +106,16 @@ h1 {
 .player-model {
   flex-flow: row;
   width: 100%;
-  height: 85%;
+  height: 54%;
+}
+
+.change {
+  width: 100%;
+  height: 8%;
+  color: #FFFFFF;
+  padding: 0;
+  flex-flow: row;
+  align-items: flex-start;
 }
 
 .player-stats {
@@ -121,10 +130,19 @@ h1 {
   flex-flow: row;
 }
 
+#hero, #antihero, #monster {
+  display: none;
+}
+
 .player-info {
   width: 30%;
   height: 100%;
   padding-left: 4px;
+}
+
+.changeKey {
+  width: 33.33%;
+  height: 100%;
 }
 
 ul {
@@ -139,7 +157,7 @@ li {
 }
 
 #canvas {
-  background-color: #8a0707;
+  background-color: #FFFFFF;
   /*border: 5px solid black;*/
   /*box-sizing: content-box;*/
   display: none;
