@@ -214,18 +214,34 @@ $(document).ready(function () {
 
 // create the monsters
   var monsterArray = []
-
   function createMonster () {
     var monster = new Monster(randomSpawn()[0], randomSpawn()[1], randomSpeed())
     monsterArray.push(monster)
   }
-  //monspawn
-  // for (var i = 0; i < 8; i++) {
-  //   createMonster()
-  // }
+
+  for (var i = 0; i < 8; i++) {
+    createMonster()
+  }
 
   // create the obstacles
-  var testObstacle = new Obstacle(64, 64, 32, 100)
+  var obstacleArray = []
+  function createObstacles () {
+    var xGap = spriteWidth * 2
+    var xWidth = width / 3
+    var yGap = spriteHeight * 2
+    var yHeight = height / 2
+    var obsPositionArray = [[xGap, yGap], [xGap + xWidth, yGap], [xGap + 2 * xWidth, yGap], [xGap, yGap + yHeight], [xGap + xWidth, yGap + yHeight], [xGap + 2 * xWidth, yGap + yHeight]]
+    obsPositionArray.forEach(function (pos) {
+      var obsWidth = Math.max(Math.random() * xWidth / 2, 48)
+      var obsHeight = Math.max(Math.random() * yHeight / 2, 48)
+      var obsX = Math.random() * (xWidth - 2 * xGap - obsWidth) + pos[0]
+      var obsY = Math.random() * (yHeight - 2 * yGap - obsHeight) + pos[1]
+      var obstacle = new Obstacle(obsX, obsY, obsWidth, obsHeight)
+      obstacleArray.push(obstacle)
+    })
+  }
+
+  createObstacles()
 
   // randomise where the monsters spawn along the edges - top right bottom left
   function randomSpawn () {
@@ -243,7 +259,7 @@ $(document).ready(function () {
 
   // randomise the monsters' speeds
   function randomSpeed () {
-    return 0.01 + Math.floor(Math.random() * 4) / 120
+    return 0.01 + Math.floor(Math.random() * 3) / 120
   }
 
 // make the monsters chase the nearest player
@@ -278,7 +294,7 @@ $(document).ready(function () {
   // check if an obstacle is in the way
   // TL = top left, TR = top right, BL = bottom left, BR = bottom right
   // returns [canMoveUp?, canMoveDown?, canMoveLeft?, canMoveRight?]
-  // function obstacleBlock (player, obs) {
+  // function isObstacleBlocking (player, obs) {
   //   var canMove = []
   //   player.x + spriteWidth <= obs.xLeft || player.x >= obs.xRight || player.y + spriteHeight <= obs.yTop || player.y >= obs.yBottom ? canMove.push(true) : canMove.push(false)
   //   player.x + spriteWidth <= obs.xLeft || player.x >= obs.xRight || player.y + spriteHeight <= obs.yTop || player.y >= obs.yBottom ? canMove.push(true) : canMove.push(false)
@@ -286,13 +302,13 @@ $(document).ready(function () {
   //   player.x >= obs.xRight || player.x + spriteWidth <= obs.xLeft || player.y + spriteHeight <= obs.yTop || player.y >= obs.yBottom ? canMove.push(true) : canMove.push(false)
   //   return canMove
   // }
-  function obstacleBlock (player, obs) {
+  function isObstacleBlocking (player, obs) {
     return player.x < obs.xRight && player.x + spriteWidth > obs.xLeft && player.y + spriteHeight > obs.yTop && player.y < obs.yBottom
   }
 
 // original obstacle check failed -> workaround - redraw player sprite if it runs into an obstacle
 // x: 0 = left, 1 = right; y: 0 = top, 1 = bottom
-  function shiftPlayer (player, obs) {
+  function shiftPlayerModel (player, obs) {
     var minX = Math.abs(player.x - obs.xRight) > Math.abs((player.x + spriteWidth) - obs.xLeft) ? obs.xLeft - spriteWidth : obs.xRight
     var minY = Math.abs(player.y - obs.yBottom) > Math.abs((player.y + spriteHeight) - obs.yTop) ? obs.yTop - spriteHeight : obs.yBottom
     return [minX, minY]
@@ -303,44 +319,68 @@ $(document).ready(function () {
   // player 1 wasd
     if (87 in keysPressed && p1.y > 0) {
       p1.y -= p1.speed * modifier
-      if (obstacleBlock(p1, testObstacle)) {
-          p1.y = shiftPlayer(p1, testObstacle)[1]
-      }
+      obstacleArray.forEach(function (obstacle) {
+        if (isObstacleBlocking(p1, obstacle)) {
+          p1.y = shiftPlayerModel(p1, obstacle)[1]
+        }
+      })
     }
     if (83 in keysPressed && p1.y < canvas.height - spriteHeight) {
       p1.y += p1.speed * modifier
-      if (obstacleBlock(p1, testObstacle)) {
-          p1.y = shiftPlayer(p1, testObstacle)[1]
-      // console.log(obstacleBlock(p1, testObstacle))
-
-      }
+      obstacleArray.forEach(function (obstacle) {
+        if (isObstacleBlocking(p1, obstacle)) {
+          p1.y = shiftPlayerModel(p1, obstacle)[1]
+        }
+      })
     }
     if (65 in keysPressed && p1.x > 0) {
       p1.x -= p1.speed * modifier
-      if (obstacleBlock(p1, testObstacle)) {
-      // console.log(obstacleBlock(p1, testObstacle))
-        p1.x = shiftPlayer(p1, testObstacle)[0]
-    }
+      obstacleArray.forEach(function (obstacle) {
+        if (isObstacleBlocking(p1, obstacle)) {
+          p1.x = shiftPlayerModel(p1, obstacle)[0]
+        }
+      })
     }
     if (68 in keysPressed && p1.x < canvas.width - spriteWidth) {
       p1.x += p1.speed * modifier
-      if (obstacleBlock(p1, testObstacle)) {
-      // console.log(obstacleBlock(p1, testObstacle))
-        p1.x = shiftPlayer(p1, testObstacle)[0]
-    }
+      obstacleArray.forEach(function (obstacle) {
+        if (isObstacleBlocking(p1, obstacle)) {
+          p1.x = shiftPlayerModel(p1, obstacle)[0]
+        }
+      })
     }
   // player 2 arrow keys
     if (38 in keysPressed && p2.y > 0) {
       p2.y -= p2.speed * modifier
+      obstacleArray.forEach(function (obstacle) {
+        if (isObstacleBlocking(p2, obstacle)) {
+          p2.y = shiftPlayerModel(p2, obstacle)[1]
+        }
+      })
     }
     if (40 in keysPressed && p2.y < canvas.height - spriteHeight) {
       p2.y += p2.speed * modifier
+      obstacleArray.forEach(function (obstacle) {
+        if (isObstacleBlocking(p2, obstacle)) {
+          p2.y = shiftPlayerModel(p2, obstacle)[1]
+        }
+      })
     }
     if (37 in keysPressed && p2.x > 0) {
       p2.x -= p2.speed * modifier
+      obstacleArray.forEach(function (obstacle) {
+        if (isObstacleBlocking(p2, obstacle)) {
+          p2.x = shiftPlayerModel(p2, obstacle)[0]
+        }
+      })
     }
     if (39 in keysPressed && p2.x < canvas.width - spriteWidth) {
       p2.x += p2.speed * modifier
+      obstacleArray.forEach(function (obstacle) {
+        if (isObstacleBlocking(p2, obstacle)) {
+          p2.x = shiftPlayerModel(p2, obstacle)[0]
+        }
+      })
     }
 
     monsterArray.forEach(function (mon) {
@@ -440,6 +480,11 @@ $(document).ready(function () {
           createMonster()
         }
       })
+      // reset obstacles
+      obstacleArray.forEach(function (obstacle) {
+        obstacleArray = []
+        createObstacles()
+      })
       // reset game variables
       p1confirmed = false
       p2confirmed = false
@@ -486,6 +531,13 @@ $(document).ready(function () {
     refreshCounter++
     context.clearRect(0, 0, width, height)
 
+    obstacleArray.forEach(function (obstacle) {
+      context.beginPath()
+      context.rect(obstacle.xLeft, obstacle.yTop, obstacle.width, obstacle.height)
+      context.fillStyle = '#484349'
+      context.fill()
+    })
+
     pArray.forEach(function (player) {
       context.drawImage(player.image, player.x, player.y)
       if (player.isInvulnerable) {
@@ -500,10 +552,6 @@ $(document).ready(function () {
     monsterArray.forEach(function (mon) {
       context.drawImage(mon.image, mon.x, mon.y)
     })
-
-    context.beginPath()
-    context.rect(testObstacle.xLeft, testObstacle.yTop, testObstacle.width, testObstacle.height)
-    context.fill()
   }
 
 // main game loop
@@ -514,12 +562,11 @@ $(document).ready(function () {
     moveSpritesCheckCollisionsUpdateScore(delta / 1000)
     render()
 
-//monspawn
 // add more monsters every 2.5s
-    // if (refreshCounter % 150 === 0) {
-    //   createMonster()
-    //   createMonster()
-    // }
+    if (refreshCounter % 150 === 0) {
+      createMonster()
+      createMonster()
+    }
 
     then = now
 
