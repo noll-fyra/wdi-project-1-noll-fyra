@@ -16,6 +16,8 @@ $(document).ready(function () {
   var hasGameStarted = false
   var isGameOver = false
   var refreshCounter = 0
+  var powerUpCounter = 0
+  var powerUpActive = false
 
   resizeCanvas()
 
@@ -86,6 +88,14 @@ $(document).ready(function () {
         $('#start-game').css('opacity', '0.0')
         $('#start-game').css('transition', 'opacity 1.5s')
       }
+    } else {
+      if (e.keyCode === 32) {
+        p1.abilityCharge > 0 ? p1.abilityCharge -= 1 : p1.abilityCharge = 0
+        p1.useAbility()
+      } else if (e.keyCode === 13) {
+        p2.abilityCharge > 0 ? p2.abilityCharge -= 1 : p2.abilityCharge = 0
+        p2.useAbility()
+      }
     }
   }, false)
 
@@ -118,7 +128,7 @@ $(document).ready(function () {
 
   // resize the canvas if necessary
   function resizeCanvas () {
-    canvas.width = window.innerWidth * 0.8
+    canvas.width = window.innerWidth * 0.9
     canvas.height = window.innerHeight * 0.8
     var margin = window.innerHeight * 0.1
     width = canvas.width
@@ -151,10 +161,18 @@ $(document).ready(function () {
     this.startingy = y
     this.x = x
     this.y = y
+    this.radius = Math.sqrt(spriteWidth * spriteWidth + spriteHeight * spriteHeight) / 2
     this.isInvulnerable = true
     this.invulnerableTimer = 120
-    // placeholder
+    this.isPhasing = false
+    this.phasingTimer = 0
     this.abilityCharge = 3
+    this.hasInvincible = false
+    this.hasPhasing = false
+    this.hasOneUp = false
+    this.hasBomb = false
+    this.hasSlow = false
+    this.hasTeleport = false
   }
 
   Player.prototype.checkIfInvulnerable = function () {
@@ -164,6 +182,42 @@ $(document).ready(function () {
     }
     if (this.invulnerableTimer <= 0) {
       this.isInvulnerable = false
+    }
+  }
+
+  Player.prototype.checkIfPhasing = function () {
+    if (this.hasPhasing) {
+      if (this.phasingTimer > 0) {
+        this.phasingTimer--
+        this.isPhasing = true
+      }
+      if (this.phasingTimer <= 0) {
+        this.isPhasing = false
+      }
+    }
+  }
+
+  Player.prototype.useAbility = function () {
+    switch (true) {
+      case (this.hasInvincible):
+        this.isInvulnerable = true
+        this.invulnerableTimer = 120
+        break
+      case (this.hasPhasing):
+        this.isPhasing = true
+        this.phasingTimer = 120
+        break
+      case (this.hasOneUp):
+        this.lives += 1
+        break
+      case (this.hasBomb):
+        break
+      case (this.hasSlow):
+        break
+      case (this.hasTeleport):
+        break
+      default:
+        return
     }
   }
 
@@ -191,6 +245,20 @@ $(document).ready(function () {
     this.height = height
   }
 
+  // power up objects
+  function PowerUp (x, y, radius, start, end) {
+    this.x = x
+    this.y = y
+    this.radius = radius
+    this.pulseRadius = radius
+    this.start = start
+    this.end = end
+  }
+
+  PowerUp.prototype.pulse = function () {
+    this.pulseRadius < this.radius * 1.5 ? this.pulseRadius += 0.2 : this.pulseRadius = this.radius
+  }
+
   // create the images
   function createImage (sprite) {
     if (sprite === 'player') {
@@ -209,6 +277,8 @@ $(document).ready(function () {
   var pArray = []
   var p1 = new Player('player', width / 3, height / 2)
   var p2 = new Player('antihero', width * 2 / 3, height / 2)
+  p1.hasOneUp = true
+  p2.hasPhasing = true
   pArray.push(p1)
   pArray.push(p2)
 
@@ -219,9 +289,9 @@ $(document).ready(function () {
     monsterArray.push(monster)
   }
 
-  for (var i = 0; i < 8; i++) {
-    createMonster()
-  }
+  // for (var i = 0; i < 8; i++) {
+  //   createMonster()
+  // }
 
   // create the obstacles
   var obstacleArray = []
@@ -242,6 +312,15 @@ $(document).ready(function () {
   }
 
   createObstacles()
+
+  // create a PowerUp
+  var powerUpArray = []
+  function createPowerUp () {
+    var powerUp = new PowerUp(width / 2 - 8, height / 2 - 8, 16, 0, 2 * Math.PI)
+    powerUpArray.push(powerUp)
+  }
+
+  createPowerUp()
 
   // randomise where the monsters spawn along the edges - top right bottom left
   function randomSpawn () {
@@ -314,87 +393,136 @@ $(document).ready(function () {
     return [minX, minY]
   }
 
+  function getPowerUp (player, powerUp) {
+    if (powerUpActive) {
+      var dx = powerUp.x - (player.x + spriteWidth / 2)
+      var dy = powerUp.y - (player.y + spriteHeight / 2)
+      var distance = Math.sqrt(dx * dx + dy * dy)
+
+      if (distance < powerUp.radius + player.radius) {
+        powerUpActive = false
+        powerUpCounter = 0
+        player.abilityCharge += 1
+      }
+    }
+  }
+
   // move players and monsters, check collisions and update the score
-  function moveSpritesCheckCollisionsUpdateScore (modifier) {
+  function movePlayers (modifier) {
   // player 1 wasd
     if (87 in keysPressed && p1.y > 0) {
       p1.y -= p1.speed * modifier
-      obstacleArray.forEach(function (obstacle) {
-        if (isObstacleBlocking(p1, obstacle)) {
-          p1.y = shiftPlayerModel(p1, obstacle)[1]
-        }
-      })
+      if (!p1.isPhasing) {
+        obstacleArray.forEach(function (obstacle) {
+          if (isObstacleBlocking(p1, obstacle)) {
+            p1.y = shiftPlayerModel(p1, obstacle)[1]
+          }
+        })
+      }
     }
     if (83 in keysPressed && p1.y < canvas.height - spriteHeight) {
       p1.y += p1.speed * modifier
-      obstacleArray.forEach(function (obstacle) {
-        if (isObstacleBlocking(p1, obstacle)) {
-          p1.y = shiftPlayerModel(p1, obstacle)[1]
-        }
-      })
+      if (!p1.isPhasing) {
+        obstacleArray.forEach(function (obstacle) {
+          if (isObstacleBlocking(p1, obstacle)) {
+            p1.y = shiftPlayerModel(p1, obstacle)[1]
+          }
+        })
+      }
     }
     if (65 in keysPressed && p1.x > 0) {
       p1.x -= p1.speed * modifier
-      obstacleArray.forEach(function (obstacle) {
-        if (isObstacleBlocking(p1, obstacle)) {
-          p1.x = shiftPlayerModel(p1, obstacle)[0]
-        }
-      })
+      if (!p1.isPhasing) {
+        obstacleArray.forEach(function (obstacle) {
+          if (isObstacleBlocking(p1, obstacle)) {
+            p1.x = shiftPlayerModel(p1, obstacle)[0]
+          }
+        })
+      }
     }
     if (68 in keysPressed && p1.x < canvas.width - spriteWidth) {
       p1.x += p1.speed * modifier
-      obstacleArray.forEach(function (obstacle) {
-        if (isObstacleBlocking(p1, obstacle)) {
-          p1.x = shiftPlayerModel(p1, obstacle)[0]
-        }
-      })
+      if (!p1.isPhasing) {
+        obstacleArray.forEach(function (obstacle) {
+          if (isObstacleBlocking(p1, obstacle)) {
+            p1.x = shiftPlayerModel(p1, obstacle)[0]
+          }
+        })
+      }
     }
   // player 2 arrow keys
     if (38 in keysPressed && p2.y > 0) {
       p2.y -= p2.speed * modifier
-      obstacleArray.forEach(function (obstacle) {
-        if (isObstacleBlocking(p2, obstacle)) {
-          p2.y = shiftPlayerModel(p2, obstacle)[1]
-        }
-      })
+      if (!p2.isPhasing) {
+        obstacleArray.forEach(function (obstacle) {
+          if (isObstacleBlocking(p2, obstacle)) {
+            p2.y = shiftPlayerModel(p2, obstacle)[1]
+          }
+        })
+      }
     }
     if (40 in keysPressed && p2.y < canvas.height - spriteHeight) {
       p2.y += p2.speed * modifier
-      obstacleArray.forEach(function (obstacle) {
-        if (isObstacleBlocking(p2, obstacle)) {
-          p2.y = shiftPlayerModel(p2, obstacle)[1]
-        }
-      })
+      if (!p2.isPhasing) {
+        obstacleArray.forEach(function (obstacle) {
+          if (isObstacleBlocking(p2, obstacle)) {
+            p2.y = shiftPlayerModel(p2, obstacle)[1]
+          }
+        })
+      }
     }
     if (37 in keysPressed && p2.x > 0) {
       p2.x -= p2.speed * modifier
-      obstacleArray.forEach(function (obstacle) {
-        if (isObstacleBlocking(p2, obstacle)) {
-          p2.x = shiftPlayerModel(p2, obstacle)[0]
-        }
-      })
+      if (!p2.isPhasing) {
+        obstacleArray.forEach(function (obstacle) {
+          if (isObstacleBlocking(p2, obstacle)) {
+            p2.x = shiftPlayerModel(p2, obstacle)[0]
+          }
+        })
+      }
     }
     if (39 in keysPressed && p2.x < canvas.width - spriteWidth) {
       p2.x += p2.speed * modifier
-      obstacleArray.forEach(function (obstacle) {
-        if (isObstacleBlocking(p2, obstacle)) {
-          p2.x = shiftPlayerModel(p2, obstacle)[0]
-        }
-      })
+      if (!p2.isPhasing) {
+        obstacleArray.forEach(function (obstacle) {
+          if (isObstacleBlocking(p2, obstacle)) {
+            p2.x = shiftPlayerModel(p2, obstacle)[0]
+          }
+        })
+      }
     }
+  }
 
+// move the monsters
+  function moveMonsters () {
     monsterArray.forEach(function (mon) {
       mon.updatePosition()
     })
+  }
 
+// check if the players are caught
+  function checkIfCaught () {
     pArray.forEach(function (player) {
       player.checkIfInvulnerable()
+      player.checkIfPhasing()
       monsterArray.forEach(function (monster) {
         catchTheHero(player, monster)
       })
     })
+  }
 
-    $('#score').text(p1.lives + ' : ' + p2.lives)
+  // check if the players have a power up
+  function checkIfHasPowerUp () {
+    pArray.forEach(function (player) {
+      powerUpArray.forEach(function (powerUp) {
+        getPowerUp(player, powerUp)
+      })
+    })
+  }
+
+// update the score
+  function updateScore () {
+    $('#score').text(p1.abilityCharge + ' charges ' + p1.lives + ' : ' + p2.lives + ' charges ' + p2.abilityCharge)
   }
 
 // show the loading screen between the landing page and the game
@@ -449,8 +577,10 @@ $(document).ready(function () {
             $('body').css('background-color', '#484349')
           }, 500)
           player.hit = false
-          player.invulnerableTimer = 120
           player.isInvulnerable = true
+          player.invulnerableTimer = 120
+          player.isPhasing = false
+          player.phasingTimer = 120
         }
         monsterArray.forEach(function (monster) {
           if (monster.hit) {
@@ -467,8 +597,10 @@ $(document).ready(function () {
         player.x = player.startingx
         player.y = player.startingy
         player.hit = false
-        player.invulnerableTimer = 120
         player.isInvulnerable = true
+        player.invulnerableTimer = 120
+        player.isPhasing = true
+        player.phasingTimer = 120
       })
       // reset monsters
       monsterArray.forEach(function (monster) {
@@ -491,6 +623,7 @@ $(document).ready(function () {
       hasGameStarted = false
       isGameOver = false
       refreshCounter = 0
+      powerUpCounter = 0
     }
   }
 
@@ -518,7 +651,6 @@ $(document).ready(function () {
     p2confirmed = false
     checkConfirm('p2', p2confirmed)
     hasGameStarted = false
-    // isGameOver = false
     $('#start-game').css('opacity', '1.0')
     $('#game-over').hide()
     $('#start-game').show()
@@ -529,7 +661,10 @@ $(document).ready(function () {
   // draw everything
   function render () {
     refreshCounter++
+    powerUpCounter++
     context.clearRect(0, 0, width, height)
+
+    context.lineWidth = 3
 
     obstacleArray.forEach(function (obstacle) {
       context.beginPath()
@@ -542,9 +677,8 @@ $(document).ready(function () {
       context.drawImage(player.image, player.x, player.y)
       if (player.isInvulnerable) {
         context.beginPath()
-        context.arc(player.x + 16, player.y + 16, 22.5, 0, 2 * Math.PI)
-        context.lineWidth = 2
-        context.strokeStyle = 'grey'
+        context.arc(player.x + spriteWidth / 2, player.y + spriteHeight / 2, player.radius, 0, 2 * Math.PI)
+        context.strokeStyle = '#457394'
         context.stroke()
       }
     })
@@ -552,6 +686,22 @@ $(document).ready(function () {
     monsterArray.forEach(function (mon) {
       context.drawImage(mon.image, mon.x, mon.y)
     })
+
+    if (powerUpActive) {
+      powerUpArray.forEach(function (powerUp) {
+        context.beginPath()
+        context.arc(powerUp.x, powerUp.y, powerUp.radius, powerUp.start, powerUp.end)
+        context.fillStyle = '#FFB30F'
+        context.fill()
+
+        context.beginPath()
+        context.arc(powerUp.x, powerUp.y, powerUp.pulseRadius, powerUp.start, powerUp.end)
+        context.strokeStyle = '#FFB30F'
+        context.stroke()
+
+        powerUp.pulse()
+      })
+    }
   }
 
 // main game loop
@@ -559,13 +709,25 @@ $(document).ready(function () {
     var now = Date.now()
     var delta = now - then
 
-    moveSpritesCheckCollisionsUpdateScore(delta / 1000)
+    movePlayers(delta / 1000)
+    moveMonsters()
+    checkIfCaught()
+    checkIfHasPowerUp()
+    updateScore()
     render()
 
-// add more monsters every 2.5s
-    if (refreshCounter % 150 === 0) {
-      createMonster()
-      createMonster()
+// add more monsters every 3s (1 + 1 monster for every three combined lives lost)
+    // if (refreshCounter % 180 === 0) {
+    //   var numToSpawn = 12 - (p1.lives + p2.lives)
+    //   createMonster()
+    //   for (i = 0; i <= numToSpawn; i += 3) {
+    //     createMonster()
+    //   }
+    // }
+
+// spawn a powerUp every 10s
+    if (powerUpCounter % 600 === 0) {
+      powerUpActive ? powerUpActive = true : powerUpActive = true
     }
 
     then = now
