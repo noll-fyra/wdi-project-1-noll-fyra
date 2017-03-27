@@ -19,39 +19,8 @@ $(document).ready(function () {
   var powerUpCounter = 0
   var powerUpActive = false
 
+// important!
   resizeCanvas()
-
-// animate the player choosing screen
-  function checkConfirm (player, status) {
-    if (status) {
-      $('#' + player).css('background-color', 'rgba(255,255,255,0.2)')
-      $('#' + player + 'confirm').css('animation', 'steady-confirm')
-      $('#' + player + 'confirm').css('background-color', '#FFFFFF')
-      $('#' + player + 'confirm').css('color', '#8a0707')
-      $('#' + player + 'up').text('')
-      $('#' + player + 'down').text('')
-      $('#' + player + 'left').text('')
-      $('#' + player + 'right').text('')
-      $('#' + player + 'confirm').text('Ready!')
-    } else {
-      $('#' + player + 'confirm').css('animation', 'blink-confirm 2s infinite')
-      $('#' + player).css('background-color', 'rgba(0,0,0,0.2)')
-      $('#' + player + 'confirm').css('color', '#FFFFFF')
-      if (player === 'p1') {
-        $('#' + player + 'up').text('W')
-        $('#' + player + 'down').text('S')
-        $('#' + player + 'left').text('A')
-        $('#' + player + 'right').text('D')
-        $('#' + player + 'confirm').text('Press [ spacebar ] to confirm')
-      } else if (player === 'p2') {
-        $('#' + player + 'up').text('⇧')
-        $('#' + player + 'down').text('⇩')
-        $('#' + player + 'left').text('⇦')
-        $('#' + player + 'right').text('⇨')
-        $('#' + player + 'confirm').text('Press [ enter ] to confirm')
-      }
-    }
-  }
 
 // add keyboard eventListeners for start-game screen
   window.addEventListener('keydown', function (e) {
@@ -80,13 +49,12 @@ $(document).ready(function () {
         p2confirmed = !p2confirmed
         checkConfirm('p2', p2confirmed)
       }
-
       if (p1confirmed && p2confirmed) {
         window.setTimeout(function () {
           loadGame()
         }, 1200)
         $('#start-game').css('opacity', '0.0')
-        $('#start-game').css('transition', 'opacity 1.5s')
+        $('#start-game').css('transition', 'opacity 1.2s')
       }
     } else {
       if (e.keyCode === 32) {
@@ -122,13 +90,45 @@ $(document).ready(function () {
     }
   }, false)
 
+  // animate the player choosing screen
+  function checkConfirm (player, confirmed) {
+    if (confirmed) {
+      $('#' + player).css('background-color', 'rgba(255,255,255,0.2)')
+      $('#' + player + 'confirm').css('animation', 'steady-confirm')
+      $('#' + player + 'confirm').css('background-color', '#FFFFFF')
+      $('#' + player + 'confirm').css('color', '#8a0707')
+      $('#' + player + 'up').text('')
+      $('#' + player + 'down').text('')
+      $('#' + player + 'left').text('')
+      $('#' + player + 'right').text('')
+      $('#' + player + 'confirm').text('Ready!')
+    } else {
+      $('#' + player + 'confirm').css('animation', 'blink-confirm 2s infinite')
+      $('#' + player).css('background-color', 'rgba(0,0,0,0.2)')
+      $('#' + player + 'confirm').css('color', '#FFFFFF')
+      if (player === 'p1') {
+        $('#' + player + 'up').text('W')
+        $('#' + player + 'down').text('S')
+        $('#' + player + 'left').text('A')
+        $('#' + player + 'right').text('D')
+        $('#' + player + 'confirm').text('Press [ spacebar ] to choose me')
+      } else if (player === 'p2') {
+        $('#' + player + 'up').text('⇧')
+        $('#' + player + 'down').text('⇩')
+        $('#' + player + 'left').text('⇦')
+        $('#' + player + 'right').text('⇨')
+        $('#' + player + 'confirm').text('Press [ enter ] to choose me')
+      }
+    }
+  }
+
   window.addEventListener('resize', resizeCanvas, false)
 
   window.addEventListener('orientationchange', resizeCanvas, false)
 
   // resize the canvas if necessary
   function resizeCanvas () {
-    canvas.width = window.innerWidth * 0.9
+    canvas.width = window.innerWidth
     canvas.height = window.innerHeight * 0.8
     var margin = window.innerHeight * 0.1
     width = canvas.width
@@ -140,7 +140,6 @@ $(document).ready(function () {
     $('#load-game').css('height', height + 'px')
     $('#game-over').css('width', width + 'px')
     $('#game-over').css('height', height + 'px')
-    $('body').css('margin', '0px, ' + margin + 'px auto')
     $('h1').css('height', margin + 'px')
   }
 
@@ -389,10 +388,10 @@ $(document).ready(function () {
       if (player.isInvulnerable) {
         return
       } else {
-        player.lives--
-        player.hit = true
-        mon.hit = true
         if (player.lives > 0) {
+          player.lives--
+          player.hit = true
+          mon.hit = true
           reset()
         } else {
           isGameOver = true
@@ -566,9 +565,9 @@ $(document).ready(function () {
 
 // show the loading screen between the landing page and the game
   function loadGame () {
-    $('#countdown').text('3')
     var countdown = 2
     $('#start-game').hide()
+    $('#countdown').text('3')
     $('#load-game').show()
     var interval = window.setInterval(function () {
       $('#countdown').text(countdown)
@@ -586,7 +585,7 @@ $(document).ready(function () {
   function startGame () {
     resizeCanvas()
     hasGameStarted = true
-    $('#start-game').hide()
+    // $('#start-game').hide()
     $('#load-game').hide()
     $('canvas').show()
     then = Date.now()
@@ -599,11 +598,13 @@ $(document).ready(function () {
     context.clearRect(0, 0, width, height)
     $('canvas').hide()
     $('#game-over').show()
-    if (p1.hit) {
-      $('#score').text('Player 2 wins!')
-    } else {
-      $('#score').text('Player 1 wins!')
-    }
+    // update the front page
+    // $('.story').text('The final survivor was')
+    // if (p1.lives > 0) {
+      // $('.be-the-last').text('Last Human #1')
+    // } else {
+    //   $('#be-the-last').text('Last Human #2')
+    // }
   }
 
   // reset the game when a player is hit or when game is over
@@ -629,56 +630,36 @@ $(document).ready(function () {
         }
       })
     } else {
-      // reset player
-      pArray.forEach(function (player) {
-        player.lives = 5
-        player.x = player.startingx
-        player.y = player.startingy
-        this.radius = Math.sqrt(spriteWidth * spriteWidth + spriteHeight * spriteHeight) / 2
-        player.hit = false
-        player.isInvulnerable = true
-        player.invulnerableTimer = 120
-        player.isPhasing = false
-        player.phasingTimer = 120
-        this.bombPlaced = false
-        this.bombTimer = 0
-        player.usingBomb = false
-        player.bombRadius = Math.sqrt(spriteWidth * spriteWidth + spriteHeight * spriteHeight) * 1.5
-        this.abilityCharge = 3
-        this.hasInvincible = false
-        this.hasPhasing = false
-        this.hasOneUp = false
-        this.hasBomb = false
-      })
+      // reset players
+      pArray = []
+      p1 = new Player('player', width / 3, height / 2)
+      p2 = new Player('antihero', width * 2 / 3, height / 2)
+      p1.hasInvincible = true
+        // p1.hasOneUp = true
+        // p1.hasPhasing = true
+      p2.hasBomb = true
+      pArray.push(p1)
+      pArray.push(p2)
       // reset monsters
-      monsterArray.forEach(function (monster) {
-        monster.x = randomSpawn()[0]
-        monster.y = randomSpawn()[1]
-        // monster.hit = false
-        Monster.radius = Math.sqrt(spriteWidth * spriteWidth + spriteHeight * spriteHeight) / 2
-        monsterArray = []
-        bombedMonstersArray = []
-        for (var i = 0; i < 8; i++) {
-          createMonster()
-        }
-      })
+      monsterArray = []
+      bombedMonstersArray = []
+      for (var i = 0; i < 8; i++) {
+        createMonster()
+      }
       // reset obstacles
-      obstacleArray.forEach(function (obstacle) {
-        obstacleArray = []
-        createObstacles()
-      })
+      obstacleArray = []
+      createObstacles()
       // reset powerups
-      powerUpArray.forEach(function (powerUp) {
-        powerUpArray = []
-        createPowerUp()
-      })
+      powerUpArray = []
+      createPowerUp()
       // reset game variables
       p1confirmed = false
       p2confirmed = false
-      hasGameStarted = false
+      hasGameStarted = true
       isGameOver = false
       refreshCounter = 0
       powerUpCounter = 0
+      powerUpActive = false
     }
   }
 
@@ -702,12 +683,6 @@ $(document).ready(function () {
     $('#game-over').hide()
     $('#start-game').show()
     $('#score').text('')
-    $('.story').text('The final survivor was')
-    if (p1.hit) {
-      $('#be-the-last').text('Last Human #2')
-    } else {
-      $('#be-the-last').text('Last Human #1')
-    }
   })
 
   // draw everything
