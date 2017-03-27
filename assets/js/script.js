@@ -10,6 +10,8 @@ $(document).ready(function () {
   var keysPressed = {}
   var then = Date.now()
 
+  var characterConfirm = [0, 0]
+
 // general game variables
   var p1confirmed = false
   var p2confirmed = false
@@ -21,6 +23,40 @@ $(document).ready(function () {
 
 // important!
   resizeCanvas()
+  updateInfo()
+
+// update player info
+  function changePlayer (number, direction) {
+    var currentNumber = 0
+    if (direction === 'right') {
+      if (characterConfirm[number] === 5) {
+        characterConfirm[number] = 0
+      } else {
+        currentNumber = characterConfirm[number]
+        characterConfirm[number] = currentNumber + 1
+      }
+    } else if (direction === 'left') {
+      if (characterConfirm[number] === 0) {
+        characterConfirm[number] = 5
+      } else {
+        currentNumber = characterConfirm[number]
+        characterConfirm[number] = currentNumber - 1
+      }
+    }
+    updateInfo()
+  }
+
+  function updateInfo () {
+    $('#p1 .sprite-name').text(p1InfoArray[characterConfirm[0]].name)
+    $('#p1 .stat-ability').text(p1InfoArray[characterConfirm[0]].ability)
+    $('#p1 .stat-description').text(p1InfoArray[characterConfirm[0]].description)
+    $('#p1 .stat-quip').text(p1InfoArray[characterConfirm[0]].quip)
+
+    $('#p2 .sprite-name').text(p2InfoArray[characterConfirm[1]].name)
+    $('#p2 .stat-ability').text(p2InfoArray[characterConfirm[1]].ability)
+    $('#p2 .stat-description').text(p2InfoArray[characterConfirm[1]].description)
+    $('#p2 .stat-quip').text(p2InfoArray[characterConfirm[1]].quip)
+  }
 
 // add keyboard eventListeners for start-game screen
   window.addEventListener('keydown', function (e) {
@@ -28,16 +64,20 @@ $(document).ready(function () {
     if (!hasGameStarted) {
       if (e.keyCode === 65) {
         $('#p1left').css('background-color', '#8a0707')
+        changePlayer(0, 'left')
       } else if (e.keyCode === 68) {
         $('#p1right').css('background-color', '#8a0707')
+        changePlayer(0, 'right')
       } else if (e.keyCode === 87) {
         $('#p1up').css('background-color', '#8a0707')
       } else if (e.keyCode === 83) {
         $('#p1down').css('background-color', '#8a0707')
       } else if (e.keyCode === 37) {
         $('#p2left').css('background-color', '#8a0707')
+        changePlayer(1, 'left')
       } else if (e.keyCode === 39) {
         $('#p2right').css('background-color', '#8a0707')
+        changePlayer(1, 'right')
       } else if (e.keyCode === 38) {
         $('#p2up').css('background-color', '#8a0707')
       } else if (e.keyCode === 40) {
@@ -50,6 +90,7 @@ $(document).ready(function () {
         checkConfirm('p2', p2confirmed)
       }
       if (p1confirmed && p2confirmed) {
+        createPlayers()
         window.setTimeout(function () {
           loadGame()
         }, 1200)
@@ -151,29 +192,40 @@ $(document).ready(function () {
   // }
 
 // player objects
-  function Player (sprite, x, y) {
+  function Player (number, sprite) {
+    this.number = number
     this.image = createImage(sprite)
-    this.lives = 5
-    this.hit = false
+    this.startingx = width / 3 * number
+    this.startingy = height / 2
+    this.x = this.startingx
+    this.y = this.startingy
     this.speed = 192
-    this.startingx = x
-    this.startingy = y
-    this.x = x
-    this.y = y
+    this.lives = 5
+    this.abilityCharge = 3
+    this.hit = false
+    // invincible - ability / invulnerable - when hit/spawning
+    this.hasInvincible = false
     this.radius = Math.sqrt(spriteWidth * spriteWidth + spriteHeight * spriteHeight) / 2
     this.isInvulnerable = true
     this.invulnerableTimer = 120
+    // phasing
+    this.hasPhasing = false
     this.isPhasing = false
     this.phasingTimer = 0
+    // oneUp
+    this.hasOneUp = false
+    // bomb
+    this.hasBomb = false
     this.usingBomb = false
     this.bombPlaced = false
     this.bombTimer = 0
     this.bombRadius = Math.sqrt(spriteWidth * spriteWidth + spriteHeight * spriteHeight) * 1.5
-    this.abilityCharge = 3
-    this.hasInvincible = false
-    this.hasPhasing = false
-    this.hasOneUp = false
-    this.hasBomb = false
+    // speeding
+    this.hasSpeeding = false
+    this.isSpeeding = false
+    this.speedingTimer = 0
+    // teleport
+    this.hasTeleporting = false
   }
 
   Player.prototype.useAbility = function () {
@@ -193,6 +245,19 @@ $(document).ready(function () {
         this.usingBomb = true
         this.bombPlaced = true
         this.bombTimer = 30
+        break
+      case (this.hasSpeeding):
+        this.isSpeeding = true
+        this.speedingTimer = 120
+        break
+      case (this.hasTeleporting):
+        if (this.number === 1) {
+          this.x = p2.x
+          this.y = p2.y
+        } else {
+          this.x = p1.x
+          this.y = p1.y
+        }
         break
       default:
         return
@@ -237,6 +302,20 @@ $(document).ready(function () {
       }
       if (this.bombTimer <= 0) {
         this.bombPlaced = false
+      }
+    }
+  }
+
+  Player.prototype.checkIfSpeeding = function () {
+    if (this.hasSpeeding) {
+      if (this.speedingTimer > 0) {
+        this.speedingTimer--
+        this.isSpeeding = true
+        this.speed = 288
+      }
+      if (this.speedingTimer <= 0) {
+        this.isSpeeding = false
+        this.speed = 192
       }
     }
   }
@@ -296,15 +375,44 @@ $(document).ready(function () {
   // var background = new Background('background', 0, 0)
 
   // create the players
+  var ali = new Player(1, 'player')
+  ali.hasInvincible = true
+  var cam = new Player(1, 'player')
+  cam.hasOneUp = true
+  var kai = new Player(1, 'player')
+  kai.hasPhasing = true
+  var lex = new Player(1, 'player')
+  lex.hasBomb = true
+  var roy = new Player(1, 'player')
+  roy.hasSpeeding = true
+  var taj = new Player(1, 'player')
+  taj.hasTeleporting = true
+  var p1Array = [ali, cam, kai, lex, roy, taj]
+
+  var ann = new Player(2, 'antihero')
+  ann.hasInvincible = true
+  var eva = new Player(2, 'antihero')
+  eva.hasOneUp = true
+  var ida = new Player(2, 'antihero')
+  ida.hasPhasing = true
+  var joy = new Player(2, 'antihero')
+  joy.hasBomb = true
+  var rae = new Player(2, 'antihero')
+  rae.hasSpeeding = true
+  var sky = new Player(2, 'antihero')
+  sky.hasTeleporting = true
+  var p2Array = [ann, eva, ida, joy, rae, sky]
+
   var pArray = []
-  var p1 = new Player('player', width / 3, height / 2)
-  var p2 = new Player('antihero', width * 2 / 3, height / 2)
-  p1.hasInvincible = true
-  // p1.hasOneUp = true
-  // p1.hasPhasing = true
-  p2.hasBomb = true
-  pArray.push(p1)
-  pArray.push(p2)
+  var p1
+  var p2
+
+  function createPlayers () {
+    p1 = p1Array[characterConfirm[0]]
+    p2 = p2Array[characterConfirm[1]]
+    pArray.push(p1)
+    pArray.push(p2)
+  }
 
 // create the monsters
   var monsterArray = []
@@ -533,6 +641,7 @@ $(document).ready(function () {
     pArray.forEach(function (player) {
       player.checkIfInvulnerable()
       player.checkIfPhasing()
+      player.checkIfSpeeding()
       monsterArray.forEach(function (monster) {
         player.checkIfBombed(monster)
         catchTheHero(player, monster)
@@ -636,14 +745,7 @@ $(document).ready(function () {
     } else {
       // reset players
       pArray = []
-      p1 = new Player('player', width / 3, height / 2)
-      p2 = new Player('antihero', width * 2 / 3, height / 2)
-      p1.hasInvincible = true
-        // p1.hasOneUp = true
-        // p1.hasPhasing = true
-      p2.hasBomb = true
-      pArray.push(p1)
-      pArray.push(p2)
+      createPlayers()
       // reset monsters
       monsterArray = []
       bombedMonstersArray = []
