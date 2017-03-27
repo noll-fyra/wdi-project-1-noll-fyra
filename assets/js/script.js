@@ -90,11 +90,11 @@ $(document).ready(function () {
       }
     } else {
       if (e.keyCode === 32) {
+        p1.abilityCharge > 0 ? p1.useAbility() : p1.abilityCharge = 0
         p1.abilityCharge > 0 ? p1.abilityCharge -= 1 : p1.abilityCharge = 0
-        p1.useAbility()
       } else if (e.keyCode === 13) {
+        p2.abilityCharge > 0 ? p2.useAbility() : p2.abilityCharge = 0
         p2.abilityCharge > 0 ? p2.abilityCharge -= 1 : p2.abilityCharge = 0
-        p2.useAbility()
       }
     }
   }, false)
@@ -166,13 +166,38 @@ $(document).ready(function () {
     this.invulnerableTimer = 120
     this.isPhasing = false
     this.phasingTimer = 0
+    this.usingBomb = false
+    this.bombPlaced = false
+    this.bombTimer = 0
+    this.bombRadius = Math.sqrt(spriteWidth * spriteWidth + spriteHeight * spriteHeight) * 1.5
     this.abilityCharge = 3
     this.hasInvincible = false
     this.hasPhasing = false
     this.hasOneUp = false
     this.hasBomb = false
-    this.hasSlow = false
-    this.hasTeleport = false
+  }
+
+  Player.prototype.useAbility = function () {
+    switch (true) {
+      case (this.hasInvincible):
+        this.isInvulnerable = true
+        this.invulnerableTimer = 120
+        break
+      case (this.hasPhasing):
+        this.isPhasing = true
+        this.phasingTimer = 120
+        break
+      case (this.hasOneUp):
+        this.lives += 1
+        break
+      case (this.hasBomb):
+        this.usingBomb = true
+        this.bombPlaced = true
+        this.bombTimer = 30
+        break
+      default:
+        return
+    }
   }
 
   Player.prototype.checkIfInvulnerable = function () {
@@ -197,37 +222,42 @@ $(document).ready(function () {
     }
   }
 
-  Player.prototype.useAbility = function () {
-    switch (true) {
-      case (this.hasInvincible):
-        this.isInvulnerable = true
-        this.invulnerableTimer = 120
-        break
-      case (this.hasPhasing):
-        this.isPhasing = true
-        this.phasingTimer = 120
-        break
-      case (this.hasOneUp):
-        this.lives += 1
-        break
-      case (this.hasBomb):
-        break
-      case (this.hasSlow):
-        break
-      case (this.hasTeleport):
-        break
-      default:
-        return
+  Player.prototype.checkIfBombed = function (monster) {
+    if (this.hasBomb) {
+      if (this.usingBomb) {
+        var dx = monster.x - (this.x + spriteWidth / 2)
+        var dy = monster.y - (this.y + spriteHeight / 2)
+        var distance = Math.sqrt(dx * dx + dy * dy)
+        if (distance < monster.radius + this.bombRadius) {
+          monster.bombed = true
+        }
+      }
+      if (this.bombTimer > 0) {
+        this.bombTimer--
+        this.bombPlaced = true
+      }
+      if (this.bombTimer <= 0) {
+        this.bombPlaced = false
+      }
     }
+  }
+
+  function clearBombedMonsters () {
+    bombedMonstersArray = monsterArray.filter(function (monster) {
+      return monster.bombed === false
+    })
+    monsterArray = bombedMonstersArray
   }
 
 // monster objects
   function Monster (x, y, speed) {
     this.image = createImage('monster')
     this.hit = false
+    this.bombed = false
     this.speedModifier = speed
     this.x = x
     this.y = y
+    this.radius = Math.sqrt(spriteWidth * spriteWidth + spriteHeight * spriteHeight) / 2
   }
 
   Monster.prototype.updatePosition = function () {
@@ -277,21 +307,24 @@ $(document).ready(function () {
   var pArray = []
   var p1 = new Player('player', width / 3, height / 2)
   var p2 = new Player('antihero', width * 2 / 3, height / 2)
-  p1.hasOneUp = true
-  p2.hasPhasing = true
+  p1.hasInvincible = true
+  // p1.hasOneUp = true
+  // p1.hasPhasing = true
+  p2.hasBomb = true
   pArray.push(p1)
   pArray.push(p2)
 
 // create the monsters
   var monsterArray = []
+  var bombedMonstersArray = []
   function createMonster () {
     var monster = new Monster(randomSpawn()[0], randomSpawn()[1], randomSpeed())
     monsterArray.push(monster)
   }
 
-  // for (var i = 0; i < 8; i++) {
-  //   createMonster()
-  // }
+  for (var i = 0; i < 8; i++) {
+    createMonster()
+  }
 
   // create the obstacles
   var obstacleArray = []
@@ -310,7 +343,6 @@ $(document).ready(function () {
       obstacleArray.push(obstacle)
     })
   }
-
   createObstacles()
 
   // create a PowerUp
@@ -319,7 +351,6 @@ $(document).ready(function () {
     var powerUp = new PowerUp(width / 2 - 8, height / 2 - 8, 16, 0, 2 * Math.PI)
     powerUpArray.push(powerUp)
   }
-
   createPowerUp()
 
   // randomise where the monsters spawn along the edges - top right bottom left
@@ -403,6 +434,11 @@ $(document).ready(function () {
         powerUpActive = false
         powerUpCounter = 0
         player.abilityCharge += 1
+        $('body').css('background-color', '#FFB30F')
+        $('body').css('transition', 'background-color 0.5s ease-out')
+        setTimeout(function () {
+          $('body').css('background-color', '#484349')
+        }, 500)
       }
     }
   }
@@ -506,9 +542,12 @@ $(document).ready(function () {
       player.checkIfInvulnerable()
       player.checkIfPhasing()
       monsterArray.forEach(function (monster) {
+        player.checkIfBombed(monster)
         catchTheHero(player, monster)
       })
+      player.usingBomb = false
     })
+    clearBombedMonsters()
   }
 
   // check if the players have a power up
@@ -527,6 +566,7 @@ $(document).ready(function () {
 
 // show the loading screen between the landing page and the game
   function loadGame () {
+    $('#countdown').text('3')
     var countdown = 2
     $('#start-game').hide()
     $('#load-game').show()
@@ -572,23 +612,21 @@ $(document).ready(function () {
       pArray.forEach(function (player) {
         if (player.hit) {
           $('body').css('background-color', '#8a0707')
-          $('body').css('transition', 'background-color 0.5s linear')
+          $('body').css('transition', 'background-color 0.5s ease-out')
           setTimeout(function () {
             $('body').css('background-color', '#484349')
           }, 500)
           player.hit = false
           player.isInvulnerable = true
           player.invulnerableTimer = 120
-          player.isPhasing = false
-          player.phasingTimer = 120
         }
-        monsterArray.forEach(function (monster) {
-          if (monster.hit) {
-            monster.x = randomSpawn()[0]
-            monster.y = randomSpawn()[1]
-            monster.hit = false
-          }
-        })
+      })
+      monsterArray.forEach(function (monster) {
+        if (monster.hit) {
+          monster.hit = false
+          monster.x = randomSpawn()[0]
+          monster.x = randomSpawn()[1]
+        }
       })
     } else {
       // reset player
@@ -596,18 +634,30 @@ $(document).ready(function () {
         player.lives = 5
         player.x = player.startingx
         player.y = player.startingy
+        this.radius = Math.sqrt(spriteWidth * spriteWidth + spriteHeight * spriteHeight) / 2
         player.hit = false
         player.isInvulnerable = true
         player.invulnerableTimer = 120
-        player.isPhasing = true
+        player.isPhasing = false
         player.phasingTimer = 120
+        this.bombPlaced = false
+        this.bombTimer = 0
+        player.usingBomb = false
+        player.bombRadius = Math.sqrt(spriteWidth * spriteWidth + spriteHeight * spriteHeight) * 1.5
+        this.abilityCharge = 3
+        this.hasInvincible = false
+        this.hasPhasing = false
+        this.hasOneUp = false
+        this.hasBomb = false
       })
       // reset monsters
       monsterArray.forEach(function (monster) {
         monster.x = randomSpawn()[0]
         monster.y = randomSpawn()[1]
-        monster.hit = false
+        // monster.hit = false
+        Monster.radius = Math.sqrt(spriteWidth * spriteWidth + spriteHeight * spriteHeight) / 2
         monsterArray = []
+        bombedMonstersArray = []
         for (var i = 0; i < 8; i++) {
           createMonster()
         }
@@ -616,6 +666,11 @@ $(document).ready(function () {
       obstacleArray.forEach(function (obstacle) {
         obstacleArray = []
         createObstacles()
+      })
+      // reset powerups
+      powerUpArray.forEach(function (powerUp) {
+        powerUpArray = []
+        createPowerUp()
       })
       // reset game variables
       p1confirmed = false
@@ -628,19 +683,11 @@ $(document).ready(function () {
   }
 
   // restart the game
-  $('#restart').on('click', function () {
-    $('#game-over').hide()
-    $('canvas').show()
-    $('#score').text('')
-    reset()
-    runMainGame()
-  })
-
-  $('#restart').on('mouseenter', function () {
+  $('#back-to-start-game').on('mouseenter', function () {
     $(this).text('Yes! I want to finish last!')
   })
 
-  $('#restart').on('mouseleave', function () {
+  $('#back-to-start-game').on('mouseleave', function () {
     $(this).text('Play again?')
   })
 
@@ -655,7 +702,12 @@ $(document).ready(function () {
     $('#game-over').hide()
     $('#start-game').show()
     $('#score').text('')
-    $('#countdown').text('3')
+    $('.story').text('The final survivor was')
+    if (p1.hit) {
+      $('#be-the-last').text('Last Human #2')
+    } else {
+      $('#be-the-last').text('Last Human #1')
+    }
   })
 
   // draw everything
@@ -674,6 +726,12 @@ $(document).ready(function () {
     })
 
     pArray.forEach(function (player) {
+      if (player.bombPlaced) {
+        context.beginPath()
+        context.arc(player.x + spriteWidth / 2, player.y + spriteHeight / 2, player.bombRadius, 0, 2 * Math.PI)
+        context.fillStyle = '#8a0707'
+        context.fill()
+      }
       context.drawImage(player.image, player.x, player.y)
       if (player.isInvulnerable) {
         context.beginPath()
@@ -717,13 +775,13 @@ $(document).ready(function () {
     render()
 
 // add more monsters every 3s (1 + 1 monster for every three combined lives lost)
-    // if (refreshCounter % 180 === 0) {
-    //   var numToSpawn = 12 - (p1.lives + p2.lives)
-    //   createMonster()
-    //   for (i = 0; i <= numToSpawn; i += 3) {
-    //     createMonster()
-    //   }
-    // }
+    if (refreshCounter % 180 === 0) {
+      var numToSpawn = Math.min(2, 12 - (p1.lives + p2.lives))
+      createMonster()
+      for (i = 0; i <= numToSpawn; i += 2) {
+        createMonster()
+      }
+    }
 
 // spawn a powerUp every 10s
     if (powerUpCounter % 600 === 0) {
