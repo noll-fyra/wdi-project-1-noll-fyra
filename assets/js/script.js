@@ -128,7 +128,7 @@ $(document).ready(function () {
 
   // resize the canvas if necessary
   function resizeCanvas () {
-    canvas.width = window.innerWidth
+    canvas.width = window.innerWidth * 0.9
     canvas.height = window.innerHeight * 0.8
     var margin = window.innerHeight * 0.1
     width = canvas.width
@@ -241,13 +241,6 @@ $(document).ready(function () {
     }
   }
 
-  function clearBombedMonsters () {
-    bombedMonstersArray = monsterArray.filter(function (monster) {
-      return monster.bombed === false
-    })
-    monsterArray = bombedMonstersArray
-  }
-
 // monster objects
   function Monster (x, y, speed) {
     this.image = createImage('monster')
@@ -285,7 +278,7 @@ $(document).ready(function () {
   }
 
   PowerUp.prototype.pulse = function () {
-    this.pulseRadius < this.radius * 1.5 ? this.pulseRadius += 0.2 : this.pulseRadius = this.radius
+    this.pulseRadius < this.radius * 1.5 ? this.pulseRadius += 0.1 : this.pulseRadius = this.radius
   }
 
   // create the images
@@ -389,28 +382,28 @@ $(document).ready(function () {
         return
       } else {
         if (player.lives > 0) {
-          player.lives--
-          player.hit = true
-          mon.hit = true
-          reset()
-        } else {
-          isGameOver = true
+          player.lives -= 1
+          if (player.lives === 0) {
+            isGameOver = true
+          } else {
+            player.hit = true
+            mon.hit = true
+            reset()
+          }
         }
       }
     }
   }
 
+// remove monsters that have been bombed
+  function clearBombedMonsters () {
+    bombedMonstersArray = monsterArray.filter(function (monster) {
+      return monster.bombed === false
+    })
+    monsterArray = bombedMonstersArray
+  }
+
   // check if an obstacle is in the way
-  // TL = top left, TR = top right, BL = bottom left, BR = bottom right
-  // returns [canMoveUp?, canMoveDown?, canMoveLeft?, canMoveRight?]
-  // function isObstacleBlocking (player, obs) {
-  //   var canMove = []
-  //   player.x + spriteWidth <= obs.xLeft || player.x >= obs.xRight || player.y + spriteHeight <= obs.yTop || player.y >= obs.yBottom ? canMove.push(true) : canMove.push(false)
-  //   player.x + spriteWidth <= obs.xLeft || player.x >= obs.xRight || player.y + spriteHeight <= obs.yTop || player.y >= obs.yBottom ? canMove.push(true) : canMove.push(false)
-  //   player.x >= obs.xRight || player.x + spriteWidth <= obs.xLeft || player.y <= obs.yTop || player.y >= obs.yBottom ? canMove.push(true) : canMove.push(false)
-  //   player.x >= obs.xRight || player.x + spriteWidth <= obs.xLeft || player.y + spriteHeight <= obs.yTop || player.y >= obs.yBottom ? canMove.push(true) : canMove.push(false)
-  //   return canMove
-  // }
   function isObstacleBlocking (player, obs) {
     return player.x < obs.xRight && player.x + spriteWidth > obs.xLeft && player.y + spriteHeight > obs.yTop && player.y < obs.yBottom
   }
@@ -535,7 +528,7 @@ $(document).ready(function () {
     })
   }
 
-// check if the players are caught
+// check if the players are caught or using abilities
   function checkIfCaught () {
     pArray.forEach(function (player) {
       player.checkIfInvulnerable()
@@ -565,6 +558,7 @@ $(document).ready(function () {
 
 // show the loading screen between the landing page and the game
   function loadGame () {
+    resizeCanvas()
     var countdown = 2
     $('#start-game').hide()
     $('#countdown').text('3')
@@ -573,19 +567,17 @@ $(document).ready(function () {
       $('#countdown').text(countdown)
       countdown--
     }, 1000)
-
+    window.setTimeout(showCanvas, 3000)
     function showCanvas () {
       window.clearInterval(interval)
       startGame()
     }
-    window.setTimeout(showCanvas, 3000)
   }
 
   // start the game
   function startGame () {
     resizeCanvas()
     hasGameStarted = true
-    // $('#start-game').hide()
     $('#load-game').hide()
     $('canvas').show()
     then = Date.now()
@@ -595,16 +587,28 @@ $(document).ready(function () {
 
   // go to game over screen
   function gameOverScreen () {
-    context.clearRect(0, 0, width, height)
-    $('canvas').hide()
-    $('#game-over').show()
-    // update the front page
-    // $('.story').text('The final survivor was')
-    // if (p1.lives > 0) {
-      // $('.be-the-last').text('Last Human #1')
-    // } else {
-    //   $('#be-the-last').text('Last Human #2')
-    // }
+    // context.clearRect(0, 0, width, height)
+    $('canvas').css('opacity', '0.0')
+    $('canvas').css('transition', 'opacity 2s')
+    window.setTimeout(function () {
+      $('#start-game').css('opacity', '1.0')
+      $('canvas').hide()
+      $('canvas').css('opacity', '1.0')
+      $('#start-game').show()
+      p1confirmed = false
+      checkConfirm('p1', p1confirmed)
+      p2confirmed = false
+      checkConfirm('p2', p2confirmed)
+      hasGameStarted = false
+      $('#score').text('')
+      // update the front page
+      // $('.story').text('The final survivor was')
+      if (p1.lives > 0) {
+        $('.story').text('The final survivor is Last Human #1')
+      } else {
+        $('.story').text('The final survivor is Last Human #2')
+      }
+    }, 2000)
   }
 
   // reset the game when a player is hit or when game is over
@@ -663,27 +667,26 @@ $(document).ready(function () {
     }
   }
 
-  // restart the game
-  $('#back-to-start-game').on('mouseenter', function () {
-    $(this).text('Yes! I want to finish last!')
-  })
-
-  $('#back-to-start-game').on('mouseleave', function () {
-    $(this).text('Play again?')
-  })
-
-// return to landing page
-  $('#back-to-start-game').on('click', function () {
-    p1confirmed = false
-    checkConfirm('p1', p1confirmed)
-    p2confirmed = false
-    checkConfirm('p2', p2confirmed)
-    hasGameStarted = false
-    $('#start-game').css('opacity', '1.0')
-    $('#game-over').hide()
-    $('#start-game').show()
-    $('#score').text('')
-  })
+  // return to landing page
+  // $('#back-to-start-game').on('mouseenter', function () {
+  //   $(this).text('Yes! I want to finish last!')
+  // })
+  //
+  // $('#back-to-start-game').on('mouseleave', function () {
+  //   $(this).text('Play again?')
+  // })
+  //
+  // $('#back-to-start-game').on('click', function () {
+  //   p1confirmed = false
+  //   checkConfirm('p1', p1confirmed)
+  //   p2confirmed = false
+  //   checkConfirm('p2', p2confirmed)
+  //   hasGameStarted = false
+  //   $('#start-game').css('opacity', '1.0')
+  //   $('#game-over').hide()
+  //   $('#start-game').show()
+  //   $('#score').text('')
+  // })
 
   // draw everything
   function render () {
