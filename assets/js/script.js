@@ -10,7 +10,7 @@ $(document).ready(function () {
   var keysPressed = {}
   var then = Date.now()
 
-  var characterConfirm = [0, 0]
+  var characterConfirm = [Math.floor(Math.random() * 6), Math.floor(Math.random() * 6)]
 
 // general game variables
   var p1confirmed = false
@@ -23,9 +23,9 @@ $(document).ready(function () {
 
 // important!
   resizeCanvas()
-  updateInfo()
+  updatebio()
 
-// update player info
+// update player bio
   function changePlayer (number, direction) {
     var currentNumber = 0
     if (direction === 'right') {
@@ -43,19 +43,19 @@ $(document).ready(function () {
         characterConfirm[number] = currentNumber - 1
       }
     }
-    updateInfo()
+    updatebio()
   }
 
-  function updateInfo () {
-    $('#p1 .sprite-name').text(p1InfoArray[characterConfirm[0]].name)
-    $('#p1 .stat-ability').text(p1InfoArray[characterConfirm[0]].ability)
-    $('#p1 .stat-description').text(p1InfoArray[characterConfirm[0]].description)
-    $('#p1 .stat-quip').text(p1InfoArray[characterConfirm[0]].quip)
+  function updatebio () {
+    $('#p1 .player-name').text(p1bioArray[characterConfirm[0]].name)
+    $('#p1 .ability-name').text(p1bioArray[characterConfirm[0]].ability)
+    $('#p1 .ability-description').text(p1bioArray[characterConfirm[0]].description)
+    // $('#p1 .ability-quip').text(p1bioArray[characterConfirm[0]].quip)
 
-    $('#p2 .sprite-name').text(p2InfoArray[characterConfirm[1]].name)
-    $('#p2 .stat-ability').text(p2InfoArray[characterConfirm[1]].ability)
-    $('#p2 .stat-description').text(p2InfoArray[characterConfirm[1]].description)
-    $('#p2 .stat-quip').text(p2InfoArray[characterConfirm[1]].quip)
+    $('#p2 .player-name').text(p2bioArray[characterConfirm[1]].name)
+    $('#p2 .ability-name').text(p2bioArray[characterConfirm[1]].ability)
+    $('#p2 .ability-description').text(p2bioArray[characterConfirm[1]].description)
+    // $('#p2 .ability-quip').text(p2bioArray[characterConfirm[1]].quip)
   }
 
 // add keyboard eventListeners for start-game screen
@@ -63,25 +63,41 @@ $(document).ready(function () {
     keysPressed[e.keyCode] = true
     if (!hasGameStarted) {
       if (e.keyCode === 65) {
-        $('#p1left').css('background-color', '#8a0707')
-        changePlayer(0, 'left')
+        if (!p1confirmed) {
+          $('#p1left').css('background-color', '#8a0707')
+          changePlayer(0, 'left')
+        }
       } else if (e.keyCode === 68) {
-        $('#p1right').css('background-color', '#8a0707')
-        changePlayer(0, 'right')
+        if (!p1confirmed) {
+          $('#p1right').css('background-color', '#8a0707')
+          changePlayer(0, 'right')
+        }
       } else if (e.keyCode === 87) {
-        $('#p1up').css('background-color', '#8a0707')
+        if (!p1confirmed) {
+          $('#p1up').css('background-color', '#8a0707')
+        }
       } else if (e.keyCode === 83) {
-        $('#p1down').css('background-color', '#8a0707')
+        if (!p1confirmed) {
+          $('#p1down').css('background-color', '#8a0707')
+        }
       } else if (e.keyCode === 37) {
-        $('#p2left').css('background-color', '#8a0707')
-        changePlayer(1, 'left')
+        if (!p2confirmed) {
+          $('#p2left').css('background-color', '#8a0707')
+          changePlayer(1, 'left')
+        }
       } else if (e.keyCode === 39) {
-        $('#p2right').css('background-color', '#8a0707')
-        changePlayer(1, 'right')
+        if (!p2confirmed) {
+          $('#p2right').css('background-color', '#8a0707')
+          changePlayer(1, 'right')
+        }
       } else if (e.keyCode === 38) {
-        $('#p2up').css('background-color', '#8a0707')
+        if (!p2confirmed) {
+          $('#p2up').css('background-color', '#8a0707')
+        }
       } else if (e.keyCode === 40) {
-        $('#p2down').css('background-color', '#8a0707')
+        if (!p2confirmed) {
+          $('#p2down').css('background-color', '#8a0707')
+        }
       } else if (e.keyCode === 32) {
         p1confirmed = !p1confirmed
         checkConfirm('p1', p1confirmed)
@@ -152,13 +168,13 @@ $(document).ready(function () {
         $('#' + player + 'down').text('S')
         $('#' + player + 'left').text('A')
         $('#' + player + 'right').text('D')
-        $('#' + player + 'confirm').text('Press [ spacebar ] to choose me')
+        $('#' + player + 'confirm').text('Press [ spacebar ] to use ability')
       } else if (player === 'p2') {
         $('#' + player + 'up').text('⇧')
         $('#' + player + 'down').text('⇩')
         $('#' + player + 'left').text('⇦')
         $('#' + player + 'right').text('⇨')
-        $('#' + player + 'confirm').text('Press [ enter ] to choose me')
+        $('#' + player + 'confirm').text('Press [ enter ] to use ability')
       }
     }
   }
@@ -169,19 +185,24 @@ $(document).ready(function () {
 
   // resize the canvas if necessary
   function resizeCanvas () {
-    canvas.width = window.innerWidth * 0.9
-    canvas.height = window.innerHeight * 0.8
-    var margin = window.innerHeight * 0.1
+    var fullWidth = window.innerWidth
+    var fullHeight = window.innerHeight
+    var canvasDivWidth = fullWidth * 0.9
+    var canvasDivHeight = fullHeight * 0.8
+    $('.canvas-div').css('width', canvasDivWidth + 'px')
+    $('.canvas-div').css('height', canvasDivHeight + 'px')
+    canvas.width = canvasDivWidth
+    canvas.height = canvasDivHeight
     width = canvas.width
     height = canvas.height
     // make the 3 screens the same dimensions as the canvas
     $('#start-game').css('width', width + 'px')
-    $('#start-game').css('height', height + 'px')
+    $('#start-game').css('height', fullHeight + 'px')
     $('#load-game').css('width', width + 'px')
-    $('#load-game').css('height', height + 'px')
-    $('#game-over').css('width', width + 'px')
-    $('#game-over').css('height', height + 'px')
-    $('h1').css('height', margin + 'px')
+    $('#load-game').css('height', fullHeight + 'px')
+    $('.canvas-container').css('width', width + 'px')
+    $('.canvas-container').css('height', fullHeight + 'px')
+    // $('h1').css('height', margin + 'px')
   }
 
 // background object
@@ -412,6 +433,13 @@ $(document).ready(function () {
     p2 = p2Array[characterConfirm[1]]
     pArray.push(p1)
     pArray.push(p2)
+    pArray.forEach(function (player) {
+      player.x = player.startingx
+      player.y = player.startingy
+      player.lives = 5
+      player.abilityCharge = 3
+      player.hit = false
+    })
   }
 
 // create the monsters
@@ -662,7 +690,15 @@ $(document).ready(function () {
 
 // update the score
   function updateScore () {
-    $('#score').text(p1.abilityCharge + ' charges ' + p1.lives + ' : ' + p2.lives + ' charges ' + p2.abilityCharge)
+    // $('.player-info-ba r').text(p1.abilityCharge + ' charges ' + p1.lives + ' : ' + p2.lives + ' charges ' + p2.abilityCharge)
+    $('#canvas-p1-info-bar .info-player-name').text(p1bioArray[characterConfirm[0]].name)
+    $('#canvas-p1-info-bar .info-ability-name').text(p1bioArray[characterConfirm[0]].ability)
+    $('#canvas-p1-info-bar .info-ability-charge').text(p1.abilityCharge)
+    $('#canvas-p1-info-bar .info-lives').text(p1.lives)
+    $('#canvas-p2-info-bar .info-player-name').text(p2bioArray[characterConfirm[1]].name)
+    $('#canvas-p2-info-bar .info-ability-name').text(p2bioArray[characterConfirm[1]].ability)
+    $('#canvas-p2-info-bar .info-ability-charge').text(p2.abilityCharge)
+    $('#canvas-p2-info-bar .info-lives').text(p2.lives)
   }
 
 // show the loading screen between the landing page and the game
@@ -671,6 +707,7 @@ $(document).ready(function () {
     var countdown = 2
     $('#start-game').hide()
     $('#countdown').text('3')
+    $('#tips').text(tipsQuips[Math.floor(Math.random() * tipsQuips.length)])
     $('#load-game').show()
     var interval = window.setInterval(function () {
       $('#countdown').text(countdown)
@@ -688,7 +725,7 @@ $(document).ready(function () {
     resizeCanvas()
     hasGameStarted = true
     $('#load-game').hide()
-    $('canvas').show()
+    $('.canvas-container').show()
     then = Date.now()
     reset()
     runMainGame()
@@ -697,25 +734,28 @@ $(document).ready(function () {
   // go to game over screen
   function gameOverScreen () {
     // context.clearRect(0, 0, width, height)
-    $('canvas').css('opacity', '0.0')
-    $('canvas').css('transition', 'opacity 2s')
+    $('.canvas-container').css('opacity', '0.0')
+    $('.canvas-container').css('transition', 'opacity 2s')
     window.setTimeout(function () {
       $('#start-game').css('opacity', '1.0')
-      $('canvas').hide()
-      $('canvas').css('opacity', '1.0')
+      $('.canvas-container').hide()
+      $('.canvas-container').css('opacity', '1.0')
       $('#start-game').show()
       p1confirmed = false
       checkConfirm('p1', p1confirmed)
       p2confirmed = false
       checkConfirm('p2', p2confirmed)
       hasGameStarted = false
-      $('#score').text('')
+      // $('.player-info-bar').hide()
       // update the front page
-      // $('.story').text('The final survivor was')
       if (p1.lives > 0) {
-        $('.story').text('The final survivor is Last Human #1')
+        console.log(p1bioArray[characterConfirm[0]].name)
+        $('#one').text(p1bioArray[characterConfirm[0]].name)
+        $('.tagline').text(p2bioArray[characterConfirm[1]].name + deathQuips[Math.floor(Math.random() * deathQuips.length)])
       } else {
-        $('.story').text('The final survivor is Last Human #2')
+        console.log(p2bioArray[characterConfirm[1]].name)
+        $('#one').text(p2bioArray[characterConfirm[1]].name)
+        $('.tagline').text(p1bioArray[characterConfirm[0]].name + deathQuips[Math.floor(Math.random() * deathQuips.length)])
       }
     }, 2000)
   }
@@ -766,29 +806,10 @@ $(document).ready(function () {
       refreshCounter = 0
       powerUpCounter = 0
       powerUpActive = false
+      // reset UI
+      // $('.player-info-bar').show()
     }
   }
-
-  // return to landing page
-  // $('#back-to-start-game').on('mouseenter', function () {
-  //   $(this).text('Yes! I want to finish last!')
-  // })
-  //
-  // $('#back-to-start-game').on('mouseleave', function () {
-  //   $(this).text('Play again?')
-  // })
-  //
-  // $('#back-to-start-game').on('click', function () {
-  //   p1confirmed = false
-  //   checkConfirm('p1', p1confirmed)
-  //   p2confirmed = false
-  //   checkConfirm('p2', p2confirmed)
-  //   hasGameStarted = false
-  //   $('#start-game').css('opacity', '1.0')
-  //   $('#game-over').hide()
-  //   $('#start-game').show()
-  //   $('#score').text('')
-  // })
 
   // draw everything
   function render () {
@@ -821,10 +842,6 @@ $(document).ready(function () {
       }
     })
 
-    monsterArray.forEach(function (mon) {
-      context.drawImage(mon.image, mon.x, mon.y)
-    })
-
     if (powerUpActive) {
       powerUpArray.forEach(function (powerUp) {
         context.beginPath()
@@ -840,6 +857,10 @@ $(document).ready(function () {
         powerUp.pulse()
       })
     }
+
+    monsterArray.forEach(function (mon) {
+      context.drawImage(mon.image, mon.x, mon.y)
+    })
   }
 
 // main game loop

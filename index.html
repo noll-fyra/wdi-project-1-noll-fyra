@@ -9,130 +9,150 @@
 </head>
 
 <body>
-  <div>
-    <h1 id="score"></h1>
-  </div>
   <div id="start-game">
-    <span class="title">POPULATION: <span id="one">ONE</span></span>
-    <div id="explanation">
-      <span class="story">A zombie apocalypse has left the human race with only two survivors.&nbsp;&nbsp;&nbsp;<span id="be-the-last">Be the last.</span></span>
+    <div class="space-fill"></div>
+    <div class="title">
+      <span id="population">POPULATION:&nbsp;&nbsp;<span id="one">ONE</span></span>
+    </div>
+    <div class="tagline">
+      <span>A zombie apocalypse has left the human race with only two survivors.&nbsp;&nbsp;&nbsp;<span id="be-the-last">Be the last.</span></span>
     </div>
     <div class="choose-player">
       <div id="p1" class="player">
-        <div class="player-name">Last Human #1</div>
+        <div class="player-space-fill"></div>
+        <div class="player-last-human">Last Human #1</div>
         <div class="player-model">
-          <div class="player-info">
-            <ul>
-              <li>• is a cat person</li>
-              <li>• favourite colour: mauve</li>
-              <li>• doesn't know his ABDs</li>
-              <li>• is in it to win it</li>
-              <li>• plays the harmonica (badly)</li>
-            </ul>
+          <div class="player-bio">
           </div>
           <div class="player-image">
+            <div class="player-name">Player 1</div>
             <div class="sprite">
               <img src="assets/images/hero.png" alt="hero.png">
             </div>
-            <div class="sprite-name">
-              name here
-            </div>
           </div>
-          <div class="player-stats">
-            <ul>
-              <li>Ability</li>
-              <li class="stat-ability"></li>
-              <li class="stat-description"></li>
-              <li class="stat-quip"></li>
-            </ul>
+          <div class="player-ability">
+            <div class="ability">Ability</div>
+            <div class="ability ability-name"></div>
+            <div class="ability ability-description"></div>
+            <div class="ability ability-quip"></div>
           </div>
         </div>
-        <div class="change">
+        <div class="keyGuide">
           <div></div>
           <div id="p1up" class='changeKey'>W</div>
           <div></div>
         </div>
-        <div class="change">
+        <div class="keyGuide">
           <div id="p1left" class='changeKey'>A</div>
-          <div id="p1confirm" class='changeKey'>Press [ spacebar ] to choose me</div>
+          <div id="p1confirm" class='changeKey'>Press [ spacebar ] to use ability</div>
           <div id="p1right" class='changeKey'>D</div>
         </div>
-        <div class="change">
+        <div class="keyGuide">
           <div></div>
           <div id="p1down" class='changeKey'>S</div>
           <div></div>
         </div>
+        <div class="player-space-fill"></div>
       </div>
+
       <div class="player-divider"></div>
+
       <div id="p2" class="player">
-        <div class="player-name">Last Human #2</div>
+        <div class="player-space-fill"></div>
+        <div class="player-last-human">Last Human #2</div>
         <div class="player-model">
-          <div class="player-stats">
-            <ul>
-              <li>Ability</li>
-              <li class="stat-ability"></li>
-              <li class="stat-description"></li>
-              <li class="stat-quip"></li>
-            </ul>
+          <div class="player-ability">
+            <div class="ability">Ability</div>
+            <div class="ability ability-name"></div>
+            <div class="ability ability-description"></div>
+            <div class="ability ability-quip"></div>
           </div>
           <div class="player-image">
+            <div class="player-name">Player 2</div>
             <div class="sprite">
               <img src="assets/images/antihero.png" alt="antihero.png">
             </div>
-            <div class="sprite-name">
-              name here
-            </div>
           </div>
-          <div class="player-info">
-            <ul>
-              <li>• is in love with a squirrel</li>
-              <li>• star sign: sagittarius</li>
-              <li>• misses his mommy</li>
-              <li>• pet peeve: the living dead</li>
-              <li>• dreams of a better tomorrow</li>
-            </ul>
+          <div class="player-bio">
           </div>
         </div>
-        <div class="change">
+        <div class="keyGuide">
           <div></div>
           <div id="p2up" class='changeKey'>&#x21E7;</div>
           <div></div>
         </div>
-        <div class="change">
+        <div class="keyGuide">
           <div id="p2left" class='changeKey'>&#x21E6;</div>
-          <div id="p2confirm" class='changeKey'>Press [ enter ] to choose me</div>
+          <div id="p2confirm" class='changeKey'>Press [ enter ] to use ability</div>
           <div id="p2right" class='changeKey'>&#x21E8;</div>
         </div>
-        <div class="change">
+        <div class="keyGuide">
           <div></div>
           <div id="p2down" class='changeKey'>&#x21E9;</div>
           <div></div>
         </div>
+        <div class="player-space-fill"></div>
       </div>
+
     </div>
-  </div>
+    <div class="space-fill"></div>
   </div>
 
   <div id="load-game">
-    <h1>The ravenous horde approaches in...</h1>
-    <h1 id="countdown">3</h1>
+    <div class="space-fill"></div>
+    <div class="space-fill"></div>
+    <div class="space-fill"></div>
+    <div class="space-fill"></div>
+    <div class="loading">
+      <span>The ravenous horde approaches in...&nbsp;<span id="countdown">3</span></span>
+    </div>
+    <div class="space-fill"></div>
+    <div class="space-fill"></div>
+    <div id="tips" class="space-fill"></div>
+    <div class="space-fill"></div>
   </div>
 
   <div class="canvas-container">
-    <canvas id="canvas" width="768" height="576">Your browser does not support HTML canvas at this time, which is required for this game.</canvas>
+    <div class="player-info-bar">
+      <div id="canvas-p1-info-bar" class="player-info-half">
+        <div class="info-player-name"></div>
+        <div class="ability-lives-space-container">
+          <div class="lives-container">
+            <div class="word-lives">Lives</div>
+            <div class="info-lives"></div>
+          </div>
+          <div class="ability-container">
+            <div class="info-ability-name"></div>
+            <div class="info-ability-charge"></div>
+          </div>
+        </div>
+        <div class="space-fill-container"></div>
+      </div>
+      <div id="canvas-p2-info-bar" class="player-info-half">
+        <div class="space-fill-container"></div>
+        <div class="ability-lives-space-container">
+          <div class="lives-container">
+            <div class="info-lives"></div>
+            <div class="word-lives">Lives</div>
+          </div>
+          <div class="ability-container">
+            <div class="info-ability-charge"></div>
+            <div class="info-ability-name"></div>
+          </div>
+        </div>
+        <div class="info-player-name"></div>
+      </div>
+    </div>
+    <div class="canvas-div">
+      <canvas id="canvas" width="768" height="576">Your browser does not support HTML canvas at this time, which is required for this game.</canvas>
+    </div>
+  </div>
+
+  <div class="hidden-images">
     <img id="hero" src="assets/images/hero.png" alt="hero.png">
     <img id="antihero" src="assets/images/antihero.png" alt="antihero.png">
     <img id="monster" src="assets/images/monster.png" alt="monster.png">
   </div>
-
-
-  <div id="game-over">
-    <button type="button" name="back-to-start-game" id="back-to-start-game">Play again?</button>
-  </div>
-  <div>
-    <h1 id="game-name"></h1>
-  </div>
-
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
   <script src="assets/js/data.js" charset="utf-8"></script>

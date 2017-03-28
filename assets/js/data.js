@@ -1,89 +1,89 @@
-var aliInfo = {
+var alibio = {
   name: 'Ali',
   ability: 'Invincibility',
-  description: 'Invulnerable to zombies for 2 seconds.',
+  description: 'Invulnerable to zombies for 2 seconds',
   quip: 'Still vulnerable to heartbreak.'
 }
 
-var camInfo = {
+var cambio = {
   name: 'Cam',
-  ability: 'Phasing',
-  description: 'Can pass through walls for 2 seconds.',
-  quip: "Can't pass last night's dinner."
-}
-
-var kaiInfo = {
-  name: 'Kai',
   ability: 'Life Gain',
-  description: 'Gain 1 life.',
+  description: 'Gain 1 life',
   quip: 'Still more lifeless than the zombies.'
 }
 
-var lexInfo = {
+var kaibio = {
+  name: 'Kai',
+  ability: 'Phasing',
+  description: 'Pass through walls for 2 seconds',
+  quip: "Can't pass last night's dinner."
+}
+
+var lexbio = {
   name: 'Lex',
   ability: 'Bombs',
-  description: 'Kill all zombies within a small radius.',
+  description: 'Kill all zombies within a small radius',
   quip: 'Size does matter.'
 }
 
-var royInfo = {
+var roybio = {
   name: 'Roy',
   ability: 'Speeding',
-  description: 'Move faster for 2 seconds.',
-  quip: 'Slow and steady wins the... argh! oh my go-!'
+  description: 'Move faster for 2 seconds',
+  quip: 'Slow and steady wins the... ahhh-!'
 }
 
-var tajInfo = {
+var tajbio = {
   name: 'Taj',
   ability: 'Teleportation',
-  description: 'Teleport to the other player.',
-  quip: 'Clingy much?'
+  description: 'Teleport to the other player',
+  quip: 'Keep your friends close.'
 }
 
-var annInfo = {
+var annbio = {
   name: 'Ann',
   ability: 'Invincibility',
-  description: 'Invulnerable to zombies for 2 seconds.',
+  description: 'Invulnerable to zombies for 2 seconds',
   quip: 'Also protects against skin rash.'
 }
 
-var evaInfo = {
+var evabio = {
   name: 'Eva',
-  ability: 'Phasing',
-  description: 'Can pass through walls for 2 seconds.',
-  quip: 'Walls are so passé.'
-}
-
-var idaInfo = {
-  name: 'Ida',
   ability: 'Life Gain',
-  description: 'Gain 1 life.',
+  description: 'Gain 1 life',
   quip: 'Are you expecting something here?'
 }
 
-var joyInfo = {
+var idabio = {
+  name: 'Ida',
+  ability: 'Phasing',
+  description: 'Pass through walls for 2 seconds',
+  quip: 'Walls are so passé.'
+}
+
+var joybio = {
   name: 'Joy',
   ability: 'Bombs',
-  description: 'Kill all zombies within a small radius.',
+  description: 'Kill all zombies within a small radius',
   quip: 'Watch out for flying guts.'
 }
 
-var raeInfo = {
+var raebio = {
   name: 'Rae',
   ability: 'Speeding',
-  description: 'Move faster for 2 seconds.',
+  description: 'Move faster for 2 seconds',
   quip: 'And reach the end of the human race.'
 }
 
-var skyInfo = {
+var skybio = {
   name: 'Sky',
   ability: 'Teleportation',
-  description: 'Teleport to the other player.',
+  description: 'Teleport to the other player',
   quip: 'Keep your enemies closer.'
 }
 
-var p1InfoArray = [aliInfo, camInfo, kaiInfo, lexInfo, royInfo, tajInfo]
-var p2InfoArray = [annInfo, evaInfo, idaInfo, joyInfo, raeInfo, skyInfo]
+var p1bioArray = [alibio, cambio, kaibio, lexbio, roybio, tajbio]
+var p2bioArray = [annbio, evabio, idabio, joybio, raebio, skybio]
 
 var tipsQuips = [
   "Zombies always chase the nearest player. Don't be the nearest player.",
@@ -91,7 +91,7 @@ var tipsQuips = [
   'Zombies only spawn on the edges. Stay away from the sides.',
   "Winter is coming... unless you're in Singapore.",
   'Zombies spawn every 2.5 seconds. 2.4. 2.3. 2.2. 2.1...',
-  'Lives are finite. Start bragging now if you have Life Gain.',
+  'If you have Life Gain, tell the other player to "get a life".',
   'Zombies can sense fear. More spawn the fewer lives you have.',
   "Don't fret if you get hit. You're invulnerable. Temporarily.",
   "Zombies love brains. So you're probably safe.",
@@ -100,7 +100,8 @@ var tipsQuips = [
   'A power up spawns every 10 seconds in the centre. Get it while it\'s hot.',
   'Zombies are pretty adventurous. They embrace everything.',
   'Teleportation is for ambitious players who are going places.',
-  'Zombies love brave players with guts.'
+  'Zombies love brave players with guts.',
+  'Zombies can climb over walls. If you were wondering.'
 ]
 
 var deathQuips = [
