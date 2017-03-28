@@ -10,15 +10,13 @@
   color: #FFFFFF;
 }
 
-
-/*html {
-  background: url("../images/space.gif") no-repeat center center fixed;
-  -webkit-background-size: cover;
+html {
+  background: url(../images/background.jpg) no-repeat center center fixed;
   background-size: cover;
-}*/
+}
 
 body {
-  background-color: #484349;
+  /*background-color: #484349;*/
 }
 
 div {
@@ -37,14 +35,14 @@ div {
 
 .title {
   width: 100%;
-  height: 15%;
+  height: 20%;
   flex-flow: row;
   font-size: 80px;
 }
 
 #population {
-  background-color: #08090A;
-  padding: 0px 0px 0px 24px;
+  align-content: flex-end;
+  font-family: 'Special Elite', cursive;
 }
 
 #one {
@@ -67,14 +65,14 @@ div {
 
 .choose-player {
   width: 100%;
-  height: 50%;
+  height: 45%;
   flex-flow: row;
 }
 
 .player {
   width: 49.8%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .player-space-fill {
@@ -98,6 +96,18 @@ div {
   width: 33%;
   height: 100%;
 }
+
+.bio {
+  width: 100%;
+  height: 15%;
+}
+
+.bio-category {
+  font-size: 24px;
+  background-color: rgba(255, 179, 15, 0.75);
+}
+
+.bio-quip {}
 
 .player-image {
   width: 33%;
@@ -130,13 +140,14 @@ div {
 
 .ability-name {
   font-size: 24px;
-  background-color: rgba(69, 115, 148, 0.3);
+  background-color: rgba(69, 115, 148, 0.75);
 }
 
 .keyGuide {
   width: 100%;
   height: 8%;
   flex-flow: row;
+  font-size: 20px;
 }
 
 .changeKey {
@@ -200,8 +211,8 @@ div {
 .info-player-name {
   width: 25%;
   height: 100%;
-  background-color: #8a0707;
-  color: #FFFFFF;
+  background-color: #FFFFFF;
+  color: #8a0707;
   font-size: 32px;
 }
 
@@ -218,14 +229,15 @@ div {
 }
 
 .word-lives {
-  width: 50%;
+  width: 75%;
   height: 100%;
-  background-color: rgba(255, 179, 15, 0.2)
+  background-color: rgba(255, 179, 15, 0.75)
 }
 
 .info-lives {
-  width: 50%;
+  width: 25%;
   height: 100%;
+  background-color: rgba(0, 0, 0, 0.5)
 }
 
 .ability-container {
@@ -235,19 +247,24 @@ div {
 }
 
 .info-ability-name {
-  width: 50%;
+  width: 75%;
   height: 100%;
-  background-color: rgba(69, 115, 148, 0.3);
+  background-color: rgba(69, 115, 148, 0.75);
 }
 
 .info-ability-charge {
+  width: 25%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5)
+}
+
+.space-fill-container {
   width: 50%;
   height: 100%;
 }
 
-.space-fill-container {
-  width: 30%;
-  height: 100%;
+#ravenous {
+  /*font-family: 'Amatic SC'*/
 }
 
 #countdown {
@@ -272,9 +289,30 @@ div {
 #canvas {
   width: 100%;
   height: 100%;
-  background-color: #FFFFFF;
+  border: 2px solid white;
+  /*background-color: #FFFFFF;*/
 }
 
 .hidden-images {
   display: none;
+}
+
+@media only screen and (max-width: 800px) {
+  * {
+    font-size: 20px;
+  }
+  #population {
+    font-size: 40px;
+    padding: 0px 0px 0px 12px;
+  }
+  #one {
+    font-size: 20px;
+    padding: 0px 8px 0px 8px;
+  }
+  .changeKey {
+    font-size: 12px;
+  }
+  /* XXX:
+   */
+  player-info-bar
 }

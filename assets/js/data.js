@@ -1,89 +1,89 @@
-var alibio = {
+var aliAbility = {
   name: 'Ali',
   ability: 'Invincibility',
   description: 'Invulnerable to zombies for 2 seconds',
   quip: 'Still vulnerable to heartbreak.'
 }
 
-var cambio = {
+var camAbility = {
   name: 'Cam',
   ability: 'Life Gain',
   description: 'Gain 1 life',
   quip: 'Still more lifeless than the zombies.'
 }
 
-var kaibio = {
+var kaiAbility = {
   name: 'Kai',
   ability: 'Phasing',
   description: 'Pass through walls for 2 seconds',
   quip: "Can't pass last night's dinner."
 }
 
-var lexbio = {
+var lexAbility = {
   name: 'Lex',
   ability: 'Bombs',
   description: 'Kill all zombies within a small radius',
   quip: 'Size does matter.'
 }
 
-var roybio = {
+var royAbility = {
   name: 'Roy',
   ability: 'Speeding',
   description: 'Move faster for 2 seconds',
   quip: 'Slow and steady wins the... ahhh-!'
 }
 
-var tajbio = {
+var tajAbility = {
   name: 'Taj',
   ability: 'Teleportation',
   description: 'Teleport to the other player',
   quip: 'Keep your friends close.'
 }
 
-var annbio = {
+var annAbility = {
   name: 'Ann',
   ability: 'Invincibility',
   description: 'Invulnerable to zombies for 2 seconds',
   quip: 'Also protects against skin rash.'
 }
 
-var evabio = {
+var evaAbility = {
   name: 'Eva',
   ability: 'Life Gain',
   description: 'Gain 1 life',
   quip: 'Are you expecting something here?'
 }
 
-var idabio = {
+var idaAbility = {
   name: 'Ida',
   ability: 'Phasing',
   description: 'Pass through walls for 2 seconds',
   quip: 'Walls are so passé.'
 }
 
-var joybio = {
+var joyAbility = {
   name: 'Joy',
   ability: 'Bombs',
   description: 'Kill all zombies within a small radius',
   quip: 'Watch out for flying guts.'
 }
 
-var raebio = {
+var raeAbility = {
   name: 'Rae',
   ability: 'Speeding',
   description: 'Move faster for 2 seconds',
   quip: 'And reach the end of the human race.'
 }
 
-var skybio = {
+var skyAbility = {
   name: 'Sky',
   ability: 'Teleportation',
   description: 'Teleport to the other player',
   quip: 'Keep your enemies closer.'
 }
 
-var p1bioArray = [alibio, cambio, kaibio, lexbio, roybio, tajbio]
-var p2bioArray = [annbio, evabio, idabio, joybio, raebio, skybio]
+var p1AbilityArray = [aliAbility, camAbility, kaiAbility, lexAbility, royAbility, tajAbility]
+var p2AbilityArray = [annAbility, evaAbility, idaAbility, joyAbility, raeAbility, skyAbility]
 
 var tipsQuips = [
   "Zombies always chase the nearest player. Don't be the nearest player.",
@@ -119,5 +119,91 @@ var deathQuips = [
   ' was taken early due to atherosclerosis and myocardial infarction. Smoking kills more people than zombies.',
   ' held off an army of zombies at Thermopylae with just 300... wait, wrong story. Horrible death really.',
   ' collapsed from excessive blood loss after a shaving incident went horribly, horribly wrong.',
-  ' met their fate at the hands of nature as they collapsed to a mega-volcanic-ultra-tornado-hyper-tsunami-meterorite.'
+  ' met their fate at the hands of nature thanks to a mega-volcanic-ultra-tornado-hyper-tsunami-meterorite.'
 ]
+var bioTemplate = ['Weapon',
+  'Favourite Food',
+  'Pet Peeve',
+  'Hobby',
+  'Good At',
+  'Dreams Of',
+  'Born',
+  'Spirit Animal',
+  'Quirk',
+  'Misses'
+]
+
+var aliBio = ['Hammer',
+  'Chee cheong fun',
+  'Bad drivers',
+  'Hunting cows',
+  'Golf',
+  'World peace',
+  '14 Feb 1982',
+  'Fox',
+  'Twitching his nose',
+  'His mommy'
+]
+
+var camBio = ['2B Pencil',
+  'Mac & cheese',
+  'Brown cats',
+  'Stamp collecting',
+  'Lazing around',
+  'A hot meal',
+  '26 Apr 1971',
+  'Mongoose',
+  'Rapidly blinking',
+  'The internet'
+]
+
+var kaiBio = ['Glock-18',
+  'Oyakodon',
+  'Rude grandmothers',
+  'Jam making',
+  'Origami',
+  'The sun rising',
+  '02 Sep 1999',
+  'Cheetah',
+  'Coughing softly',
+  'TV'
+]
+
+var lexBio = ['Hunting knife',
+  'Pad Thai',
+  'Noisy neighbours',
+  'Snail art',
+  'Metalwork',
+  'Nothing',
+  '11 Nov 2002',
+  'Polar bear',
+  'Finger drumming',
+  'Ida'
+]
+
+var royBio = ['Bare hands',
+  'Tomato soup',
+  'Public flossing',
+  'Solitaire',
+  'Math',
+  'Heaven',
+  '19 May 1980',
+  'Gorilla',
+  'Licking his nose',
+  'His old job'
+]
+
+var tajBio = ['Sniper rifle',
+  'Fish and chips',
+  'Poor spelling',
+  'Reading the dictionary',
+  'Spelling',
+  'Words',
+  '07 Oct 1956',
+  'Dolphin',
+  'Correcting other people',
+  'His dog'
+]
+
+var p1BioArray = [aliBio, camBio, kaiBio, lexBio, royBio, tajBio]
+var p2BioArray = [aliBio, camBio, kaiBio, lexBio, royBio, tajBio]

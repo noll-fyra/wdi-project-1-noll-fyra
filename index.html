@@ -4,7 +4,8 @@
 <head>
   <meta charset="utf-8">
   <title>POPULATION: ONE</title>
-  <link href="https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Amatic+SC|Nosifer|Special+Elite|Trade+Winds|Yanone+Kaffeesatz"
+      rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="assets/css/stylesheet.css">
 </head>
 
@@ -12,7 +13,7 @@
   <div id="start-game">
     <div class="space-fill"></div>
     <div class="title">
-      <span id="population">POPULATION:&nbsp;&nbsp;<span id="one">ONE</span></span>
+      <span id="population">POPULATION:&nbsp;<span id="one">ONE</span></span>
     </div>
     <div class="tagline">
       <span>A zombie apocalypse has left the human race with only two survivors.&nbsp;&nbsp;&nbsp;<span id="be-the-last">Be the last.</span></span>
@@ -23,6 +24,9 @@
         <div class="player-last-human">Last Human #1</div>
         <div class="player-model">
           <div class="player-bio">
+            <div class="bio">Bio</div>
+            <div class="bio bio-category"></div>
+            <div class="bio bio-quip"></div>
           </div>
           <div class="player-image">
             <div class="player-name">Player 1</div>
@@ -34,7 +38,6 @@
             <div class="ability">Ability</div>
             <div class="ability ability-name"></div>
             <div class="ability ability-description"></div>
-            <div class="ability ability-quip"></div>
           </div>
         </div>
         <div class="keyGuide">
@@ -44,7 +47,7 @@
         </div>
         <div class="keyGuide">
           <div id="p1left" class='changeKey'>A</div>
-          <div id="p1confirm" class='changeKey'>Press [ spacebar ] to use ability</div>
+          <div id="p1confirm" class='changeKey'>[ spacebar ]</div>
           <div id="p1right" class='changeKey'>D</div>
         </div>
         <div class="keyGuide">
@@ -65,15 +68,17 @@
             <div class="ability">Ability</div>
             <div class="ability ability-name"></div>
             <div class="ability ability-description"></div>
-            <div class="ability ability-quip"></div>
           </div>
           <div class="player-image">
             <div class="player-name">Player 2</div>
             <div class="sprite">
-              <img src="assets/images/antihero.png" alt="antihero.png">
+              <img src="assets/images/heroine.png" alt="heroine.png">
             </div>
           </div>
           <div class="player-bio">
+            <div class="bio">Bio</div>
+            <div class="bio bio-category"></div>
+            <div class="bio bio-quip"></div>
           </div>
         </div>
         <div class="keyGuide">
@@ -83,7 +88,7 @@
         </div>
         <div class="keyGuide">
           <div id="p2left" class='changeKey'>&#x21E6;</div>
-          <div id="p2confirm" class='changeKey'>Press [ enter ] to use ability</div>
+          <div id="p2confirm" class='changeKey'>[ enter ]</div>
           <div id="p2right" class='changeKey'>&#x21E8;</div>
         </div>
         <div class="keyGuide">
@@ -104,7 +109,7 @@
     <div class="space-fill"></div>
     <div class="space-fill"></div>
     <div class="loading">
-      <span>The ravenous horde approaches in...&nbsp;<span id="countdown">3</span></span>
+      <span id="ravenous">The ravenous horde approaches in...&nbsp;<span id="countdown">3</span></span>
     </div>
     <div class="space-fill"></div>
     <div class="space-fill"></div>
@@ -114,7 +119,7 @@
 
   <div class="canvas-container">
     <div class="player-info-bar">
-      <div id="canvas-p1-info-bar" class="player-info-half">
+      <div id="p1-info-bar" class="player-info-half">
         <div class="info-player-name"></div>
         <div class="ability-lives-space-container">
           <div class="lives-container">
@@ -128,7 +133,7 @@
         </div>
         <div class="space-fill-container"></div>
       </div>
-      <div id="canvas-p2-info-bar" class="player-info-half">
+      <div id="p2-info-bar" class="player-info-half">
         <div class="space-fill-container"></div>
         <div class="ability-lives-space-container">
           <div class="lives-container">
@@ -150,8 +155,10 @@
 
   <div class="hidden-images">
     <img id="hero" src="assets/images/hero.png" alt="hero.png">
-    <img id="antihero" src="assets/images/antihero.png" alt="antihero.png">
+    <img id="heroine" src="assets/images/heroine.png" alt="heroine.png">
     <img id="monster" src="assets/images/monster.png" alt="monster.png">
+    <img id="zombie" src="assets/images/zombie.png" alt="zombie.png">
+    <img id="background" src="assets/images/background.jpg" alt="background.jpg">
   </div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -161,4 +168,4 @@
 </body>
 
 
-</html>
+</html>heroineheroine

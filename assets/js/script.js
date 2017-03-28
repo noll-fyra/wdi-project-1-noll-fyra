@@ -11,6 +11,7 @@ $(document).ready(function () {
   var then = Date.now()
 
   var characterConfirm = [Math.floor(Math.random() * 6), Math.floor(Math.random() * 6)]
+  var characterBio = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)]
 
 // general game variables
   var p1confirmed = false
@@ -23,10 +24,11 @@ $(document).ready(function () {
 
 // important!
   resizeCanvas()
-  updatebio()
+  updateAbility()
+  updateBio()
 
-// update player bio
-  function changePlayer (number, direction) {
+// update player ability
+  function changePlayerAbility (number, direction) {
     var currentNumber = 0
     if (direction === 'right') {
       if (characterConfirm[number] === 5) {
@@ -43,19 +45,47 @@ $(document).ready(function () {
         characterConfirm[number] = currentNumber - 1
       }
     }
-    updatebio()
+    updateAbility()
+    updateBio()
   }
 
-  function updatebio () {
-    $('#p1 .player-name').text(p1bioArray[characterConfirm[0]].name)
-    $('#p1 .ability-name').text(p1bioArray[characterConfirm[0]].ability)
-    $('#p1 .ability-description').text(p1bioArray[characterConfirm[0]].description)
-    // $('#p1 .ability-quip').text(p1bioArray[characterConfirm[0]].quip)
+  function changePlayerBio (number, direction) {
+    var currentNumber = 0
+    if (direction === 'up') {
+      if (characterBio[number] === 9) {
+        characterBio[number] = 0
+      } else {
+        currentNumber = characterBio[number]
+        characterBio[number] = currentNumber + 1
+      }
+    } else if (direction === 'down') {
+      if (characterBio[number] === 0) {
+        characterBio[number] = 9
+      } else {
+        currentNumber = characterBio[number]
+        characterBio[number] = currentNumber - 1
+      }
+    }
+    updateBio()
+    updateAbility()
+  }
 
-    $('#p2 .player-name').text(p2bioArray[characterConfirm[1]].name)
-    $('#p2 .ability-name').text(p2bioArray[characterConfirm[1]].ability)
-    $('#p2 .ability-description').text(p2bioArray[characterConfirm[1]].description)
-    // $('#p2 .ability-quip').text(p2bioArray[characterConfirm[1]].quip)
+  function updateAbility () {
+    $('#p1 .player-name').text(p1AbilityArray[characterConfirm[0]].name)
+    $('#p1 .ability-name').text(p1AbilityArray[characterConfirm[0]].ability)
+    $('#p1 .ability-description').text(p1AbilityArray[characterConfirm[0]].description)
+
+    $('#p2 .player-name').text(p2AbilityArray[characterConfirm[1]].name)
+    $('#p2 .ability-name').text(p2AbilityArray[characterConfirm[1]].ability)
+    $('#p2 .ability-description').text(p2AbilityArray[characterConfirm[1]].description)
+  }
+
+  function updateBio () {
+    $('#p1 .bio-category').text(bioTemplate[characterBio[0]])
+    $('#p1 .bio-quip').text(p1BioArray[characterConfirm[0]][characterBio[0]])
+
+    $('#p2 .bio-category').text(bioTemplate[characterBio[1]])
+    $('#p2 .bio-quip').text(p1BioArray[characterConfirm[1]][characterBio[1]])
   }
 
 // add keyboard eventListeners for start-game screen
@@ -65,38 +95,42 @@ $(document).ready(function () {
       if (e.keyCode === 65) {
         if (!p1confirmed) {
           $('#p1left').css('background-color', '#8a0707')
-          changePlayer(0, 'left')
+          changePlayerAbility(0, 'left')
         }
       } else if (e.keyCode === 68) {
         if (!p1confirmed) {
           $('#p1right').css('background-color', '#8a0707')
-          changePlayer(0, 'right')
+          changePlayerAbility(0, 'right')
         }
       } else if (e.keyCode === 87) {
         if (!p1confirmed) {
           $('#p1up').css('background-color', '#8a0707')
+          changePlayerBio(0, 'up')
         }
       } else if (e.keyCode === 83) {
         if (!p1confirmed) {
           $('#p1down').css('background-color', '#8a0707')
+          changePlayerBio(0, 'down')
         }
       } else if (e.keyCode === 37) {
         if (!p2confirmed) {
           $('#p2left').css('background-color', '#8a0707')
-          changePlayer(1, 'left')
+          changePlayerAbility(1, 'left')
         }
       } else if (e.keyCode === 39) {
         if (!p2confirmed) {
           $('#p2right').css('background-color', '#8a0707')
-          changePlayer(1, 'right')
+          changePlayerAbility(1, 'right')
         }
       } else if (e.keyCode === 38) {
         if (!p2confirmed) {
           $('#p2up').css('background-color', '#8a0707')
+          changePlayerBio(1, 'up')
         }
       } else if (e.keyCode === 40) {
         if (!p2confirmed) {
           $('#p2down').css('background-color', '#8a0707')
+          changePlayerBio(1, 'down')
         }
       } else if (e.keyCode === 32) {
         p1confirmed = !p1confirmed
@@ -150,7 +184,7 @@ $(document).ready(function () {
   // animate the player choosing screen
   function checkConfirm (player, confirmed) {
     if (confirmed) {
-      $('#' + player).css('background-color', 'rgba(255,255,255,0.2)')
+      $('#' + player).css('background-color', 'rgba(255,255,255,0.5)')
       $('#' + player + 'confirm').css('animation', 'steady-confirm')
       $('#' + player + 'confirm').css('background-color', '#FFFFFF')
       $('#' + player + 'confirm').css('color', '#8a0707')
@@ -161,20 +195,20 @@ $(document).ready(function () {
       $('#' + player + 'confirm').text('Ready!')
     } else {
       $('#' + player + 'confirm').css('animation', 'blink-confirm 2s infinite')
-      $('#' + player).css('background-color', 'rgba(0,0,0,0.2)')
+      $('#' + player).css('background-color', 'rgba(0,0,0,0.5)')
       $('#' + player + 'confirm').css('color', '#FFFFFF')
       if (player === 'p1') {
         $('#' + player + 'up').text('W')
         $('#' + player + 'down').text('S')
         $('#' + player + 'left').text('A')
         $('#' + player + 'right').text('D')
-        $('#' + player + 'confirm').text('Press [ spacebar ] to use ability')
+        $('#' + player + 'confirm').text('[ spacebar ]')
       } else if (player === 'p2') {
         $('#' + player + 'up').text('⇧')
         $('#' + player + 'down').text('⇩')
         $('#' + player + 'left').text('⇦')
         $('#' + player + 'right').text('⇨')
-        $('#' + player + 'confirm').text('Press [ enter ] to use ability')
+        $('#' + player + 'confirm').text('[ enter ]')
       }
     }
   }
@@ -195,22 +229,14 @@ $(document).ready(function () {
     canvas.height = canvasDivHeight
     width = canvas.width
     height = canvas.height
-    // make the 3 screens the same dimensions as the canvas
+    // resize the screens
     $('#start-game').css('width', width + 'px')
     $('#start-game').css('height', fullHeight + 'px')
     $('#load-game').css('width', width + 'px')
     $('#load-game').css('height', fullHeight + 'px')
     $('.canvas-container').css('width', width + 'px')
     $('.canvas-container').css('height', fullHeight + 'px')
-    // $('h1').css('height', margin + 'px')
   }
-
-// background object
-  // function Background (sprite, x, y) {
-  //   this.image = createImage(sprite)
-  //   this.x = x
-  //   this.y = y
-  // }
 
 // player objects
   function Player (number, sprite) {
@@ -307,14 +333,14 @@ $(document).ready(function () {
     }
   }
 
-  Player.prototype.checkIfBombed = function (monster) {
+  Player.prototype.checkIfBombed = function (zombie) {
     if (this.hasBomb) {
       if (this.usingBomb) {
-        var dx = monster.x - (this.x + spriteWidth / 2)
-        var dy = monster.y - (this.y + spriteHeight / 2)
+        var dx = zombie.x - (this.x + spriteWidth / 2)
+        var dy = zombie.y - (this.y + spriteHeight / 2)
         var distance = Math.sqrt(dx * dx + dy * dy)
-        if (distance < monster.radius + this.bombRadius) {
-          monster.bombed = true
+        if (distance < zombie.radius + this.bombRadius) {
+          zombie.bombed = true
         }
       }
       if (this.bombTimer > 0) {
@@ -341,9 +367,9 @@ $(document).ready(function () {
     }
   }
 
-// monster objects
-  function Monster (x, y, speed) {
-    this.image = createImage('monster')
+// zombie objects
+  function Zombie (x, y, speed) {
+    this.image = createImage('zombie')
     this.hit = false
     this.bombed = false
     this.speedModifier = speed
@@ -352,7 +378,7 @@ $(document).ready(function () {
     this.radius = Math.sqrt(spriteWidth * spriteWidth + spriteHeight * spriteHeight) / 2
   }
 
-  Monster.prototype.updatePosition = function () {
+  Zombie.prototype.updatePosition = function () {
     this.x += chaseTheHero(p1.x, p1.y, p2.x, p2.y, this.x, this.y, this.speedModifier)[0]
     this.y += chaseTheHero(p1.x, p1.y, p2.x, p2.y, this.x, this.y, this.speedModifier)[1]
   }
@@ -385,15 +411,12 @@ $(document).ready(function () {
   function createImage (sprite) {
     if (sprite === 'player') {
       return document.querySelector('#hero')
-    } else if (sprite === 'antihero') {
-      return document.querySelector('#antihero')
-    } else if (sprite === 'monster') {
-      return document.querySelector('#monster')
+    } else if (sprite === 'heroine') {
+      return document.querySelector('#heroine')
+    } else if (sprite === 'zombie') {
+      return document.querySelector('#zombie')
     }
   }
-
-  // create the background
-  // var background = new Background('background', 0, 0)
 
   // create the players
   var ali = new Player(1, 'player')
@@ -410,17 +433,17 @@ $(document).ready(function () {
   taj.hasTeleporting = true
   var p1Array = [ali, cam, kai, lex, roy, taj]
 
-  var ann = new Player(2, 'antihero')
+  var ann = new Player(2, 'heroine')
   ann.hasInvincible = true
-  var eva = new Player(2, 'antihero')
+  var eva = new Player(2, 'heroine')
   eva.hasOneUp = true
-  var ida = new Player(2, 'antihero')
+  var ida = new Player(2, 'heroine')
   ida.hasPhasing = true
-  var joy = new Player(2, 'antihero')
+  var joy = new Player(2, 'heroine')
   joy.hasBomb = true
-  var rae = new Player(2, 'antihero')
+  var rae = new Player(2, 'heroine')
   rae.hasSpeeding = true
-  var sky = new Player(2, 'antihero')
+  var sky = new Player(2, 'heroine')
   sky.hasTeleporting = true
   var p2Array = [ann, eva, ida, joy, rae, sky]
 
@@ -442,16 +465,16 @@ $(document).ready(function () {
     })
   }
 
-// create the monsters
-  var monsterArray = []
-  var bombedMonstersArray = []
-  function createMonster () {
-    var monster = new Monster(randomSpawn()[0], randomSpawn()[1], randomSpeed())
-    monsterArray.push(monster)
+// create the zombiess
+  var zombieArray = []
+  var bombedZombiesArray = []
+  function createZombie () {
+    var zombie = new Zombie(randomSpawn()[0], randomSpawn()[1], randomSpeed())
+    zombieArray.push(zombie)
   }
 
   for (var i = 0; i < 8; i++) {
-    createMonster()
+    createZombie()
   }
 
   // create the obstacles
@@ -481,9 +504,9 @@ $(document).ready(function () {
   }
   createPowerUp()
 
-  // randomise where the monsters spawn along the edges - top right bottom left
+  // randomise where the zombies spawn along the edges - top right bottom left
   function randomSpawn () {
-    switch (monsterArray.length % 4) {
+    switch (zombieArray.length % 4) {
       case 0:
         return [Math.floor(Math.random() * width) - spriteWidth, 0]
       case 1:
@@ -495,25 +518,25 @@ $(document).ready(function () {
     }
   }
 
-  // randomise the monsters' speeds
+  // randomise the zombies' speeds
   function randomSpeed () {
     return 0.01 + Math.floor(Math.random() * 3) / 120
   }
 
-// make the monsters chase the nearest player
-  function chaseTheHero (p1x, p1y, p2x, p2y, monx, mony, monspeedmod) {
-    var p1xDistance = Math.abs(p1x - monx)
-    var p1yDistance = Math.abs(p1y - mony)
+// make the zombies chase the nearest player
+  function chaseTheHero (p1x, p1y, p2x, p2y, zomx, zomy, zomspeedmod) {
+    var p1xDistance = Math.abs(p1x - zomx)
+    var p1yDistance = Math.abs(p1y - zomy)
     var p1Hypotenuse = Math.sqrt(Math.pow(p1xDistance, 2) + Math.pow(p1yDistance, 2))
-    var p2xDistance = Math.abs(p2x - monx)
-    var p2yDistance = Math.abs(p2y - mony)
+    var p2xDistance = Math.abs(p2x - zomx)
+    var p2yDistance = Math.abs(p2y - zomy)
     var p2Hypotenuse = Math.sqrt(Math.pow(p2xDistance, 2) + Math.pow(p2yDistance, 2))
-    return (p1Hypotenuse >= p2Hypotenuse ? [(p2x - monx) * monspeedmod, (p2y - mony) * monspeedmod] : [(p1x - monx) * monspeedmod, (p1y - mony) * monspeedmod])
+    return (p1Hypotenuse >= p2Hypotenuse ? [(p2x - zomx) * zomspeedmod, (p2y - zomy) * zomspeedmod] : [(p1x - zomx) * zomspeedmod, (p1y - zomy) * zomspeedmod])
   }
 
 // check if the player is caught
-  function catchTheHero (player, mon) {
-    if (player.x <= (mon.x + spriteWidth) && mon.x <= (player.x + spriteWidth) && player.y <= (mon.y + spriteHeight) && mon.y <= (player.y + spriteHeight)) {
+  function catchTheHero (player, zombie) {
+    if (player.x <= (zombie.x + spriteWidth) && zombie.x <= (player.x + spriteWidth) && player.y <= (zombie.y + spriteHeight) && zombie.y <= (player.y + spriteHeight)) {
       if (player.isInvulnerable) {
         return
       } else {
@@ -523,7 +546,7 @@ $(document).ready(function () {
             isGameOver = true
           } else {
             player.hit = true
-            mon.hit = true
+            zombie.hit = true
             reset()
           }
         }
@@ -531,12 +554,12 @@ $(document).ready(function () {
     }
   }
 
-// remove monsters that have been bombed
-  function clearBombedMonsters () {
-    bombedMonstersArray = monsterArray.filter(function (monster) {
-      return monster.bombed === false
+// remove zombies that have been bombed
+  function clearBombedZombies () {
+    bombedZombiesArray = zombieArray.filter(function (zombie) {
+      return zombie.bombed === false
     })
-    monsterArray = bombedMonstersArray
+    zombieArray = bombedZombiesArray
   }
 
   // check if an obstacle is in the way
@@ -565,13 +588,13 @@ $(document).ready(function () {
         $('body').css('background-color', '#FFB30F')
         $('body').css('transition', 'background-color 0.5s ease-out')
         setTimeout(function () {
-          $('body').css('background-color', '#484349')
-        }, 500)
+          $('body').css('background-color', 'rgba(0, 0, 0, 0.0)')
+        }, 300)
       }
     }
   }
 
-  // move players and monsters, check collisions and update the score
+  // move players and zombies, check collisions and update the score
   function movePlayers (modifier) {
   // player 1 wasd
     if (87 in keysPressed && p1.y > 0) {
@@ -657,10 +680,10 @@ $(document).ready(function () {
     }
   }
 
-// move the monsters
-  function moveMonsters () {
-    monsterArray.forEach(function (mon) {
-      mon.updatePosition()
+// move the zombies
+  function moveZombies () {
+    zombieArray.forEach(function (zombie) {
+      zombie.updatePosition()
     })
   }
 
@@ -670,13 +693,13 @@ $(document).ready(function () {
       player.checkIfInvulnerable()
       player.checkIfPhasing()
       player.checkIfSpeeding()
-      monsterArray.forEach(function (monster) {
-        player.checkIfBombed(monster)
-        catchTheHero(player, monster)
+      zombieArray.forEach(function (zombie) {
+        player.checkIfBombed(zombie)
+        catchTheHero(player, zombie)
       })
       player.usingBomb = false
     })
-    clearBombedMonsters()
+    clearBombedZombies()
   }
 
   // check if the players have a power up
@@ -691,14 +714,14 @@ $(document).ready(function () {
 // update the score
   function updateScore () {
     // $('.player-info-ba r').text(p1.abilityCharge + ' charges ' + p1.lives + ' : ' + p2.lives + ' charges ' + p2.abilityCharge)
-    $('#canvas-p1-info-bar .info-player-name').text(p1bioArray[characterConfirm[0]].name)
-    $('#canvas-p1-info-bar .info-ability-name').text(p1bioArray[characterConfirm[0]].ability)
-    $('#canvas-p1-info-bar .info-ability-charge').text(p1.abilityCharge)
-    $('#canvas-p1-info-bar .info-lives').text(p1.lives)
-    $('#canvas-p2-info-bar .info-player-name').text(p2bioArray[characterConfirm[1]].name)
-    $('#canvas-p2-info-bar .info-ability-name').text(p2bioArray[characterConfirm[1]].ability)
-    $('#canvas-p2-info-bar .info-ability-charge').text(p2.abilityCharge)
-    $('#canvas-p2-info-bar .info-lives').text(p2.lives)
+    $('#p1-info-bar .info-player-name').text(p1AbilityArray[characterConfirm[0]].name)
+    $('#p1-info-bar .info-ability-name').text(p1AbilityArray[characterConfirm[0]].ability)
+    $('#p1-info-bar .info-ability-charge').text(p1.abilityCharge)
+    $('#p1-info-bar .info-lives').text(p1.lives)
+    $('#p2-info-bar .info-player-name').text(p2AbilityArray[characterConfirm[1]].name)
+    $('#p2-info-bar .info-ability-name').text(p2AbilityArray[characterConfirm[1]].ability)
+    $('#p2-info-bar .info-ability-charge').text(p2.abilityCharge)
+    $('#p2-info-bar .info-lives').text(p2.lives)
   }
 
 // show the loading screen between the landing page and the game
@@ -735,7 +758,7 @@ $(document).ready(function () {
   function gameOverScreen () {
     // context.clearRect(0, 0, width, height)
     $('.canvas-container').css('opacity', '0.0')
-    $('.canvas-container').css('transition', 'opacity 2s')
+    $('.canvas-container').css('transition', 'opacity 1.5s')
     window.setTimeout(function () {
       $('#start-game').css('opacity', '1.0')
       $('.canvas-container').hide()
@@ -749,15 +772,15 @@ $(document).ready(function () {
       // $('.player-info-bar').hide()
       // update the front page
       if (p1.lives > 0) {
-        console.log(p1bioArray[characterConfirm[0]].name)
-        $('#one').text(p1bioArray[characterConfirm[0]].name)
-        $('.tagline').text(p2bioArray[characterConfirm[1]].name + deathQuips[Math.floor(Math.random() * deathQuips.length)])
+        console.log(p1AbilityArray[characterConfirm[0]].name)
+        $('#one').text(p1AbilityArray[characterConfirm[0]].name)
+        $('.tagline').text(p2AbilityArray[characterConfirm[1]].name + deathQuips[Math.floor(Math.random() * deathQuips.length)])
       } else {
-        console.log(p2bioArray[characterConfirm[1]].name)
-        $('#one').text(p2bioArray[characterConfirm[1]].name)
-        $('.tagline').text(p1bioArray[characterConfirm[0]].name + deathQuips[Math.floor(Math.random() * deathQuips.length)])
+        console.log(p2AbilityArray[characterConfirm[1]].name)
+        $('#one').text(p2AbilityArray[characterConfirm[1]].name)
+        $('.tagline').text(p1AbilityArray[characterConfirm[0]].name + deathQuips[Math.floor(Math.random() * deathQuips.length)])
       }
-    }, 2000)
+    }, 1200)
   }
 
   // reset the game when a player is hit or when game is over
@@ -768,29 +791,29 @@ $(document).ready(function () {
           $('body').css('background-color', '#8a0707')
           $('body').css('transition', 'background-color 0.5s ease-out')
           setTimeout(function () {
-            $('body').css('background-color', '#484349')
-          }, 500)
+            $('body').css('background-color', 'rgba(0, 0, 0, 0.0)')
+          }, 300)
           player.hit = false
           player.isInvulnerable = true
           player.invulnerableTimer = 120
         }
       })
-      monsterArray.forEach(function (monster) {
-        if (monster.hit) {
-          monster.hit = false
-          monster.x = randomSpawn()[0]
-          monster.x = randomSpawn()[1]
+      zombieArray.forEach(function (zombie) {
+        if (zombie.hit) {
+          zombie.hit = false
+          zombie.x = randomSpawn()[0]
+          zombie.x = randomSpawn()[1]
         }
       })
     } else {
       // reset players
       pArray = []
       createPlayers()
-      // reset monsters
-      monsterArray = []
-      bombedMonstersArray = []
+      // reset zombies
+      zombieArray = []
+      bombedZombiesArray = []
       for (var i = 0; i < 8; i++) {
-        createMonster()
+        createZombie()
       }
       // reset obstacles
       obstacleArray = []
@@ -817,12 +840,19 @@ $(document).ready(function () {
     powerUpCounter++
     context.clearRect(0, 0, width, height)
 
+    context.lineWidth = 1
+
+    context.beginPath()
+    context.rect(spriteWidth, spriteHeight, width - 2 * spriteWidth, height - 2 * spriteHeight)
+    context.strokeStyle = '#8a0707'
+    context.stroke()
+
     context.lineWidth = 3
 
     obstacleArray.forEach(function (obstacle) {
       context.beginPath()
       context.rect(obstacle.xLeft, obstacle.yTop, obstacle.width, obstacle.height)
-      context.fillStyle = '#484349'
+      context.fillStyle = '#FFFFFF'
       context.fill()
     })
 
@@ -837,7 +867,7 @@ $(document).ready(function () {
       if (player.isInvulnerable) {
         context.beginPath()
         context.arc(player.x + spriteWidth / 2, player.y + spriteHeight / 2, player.radius, 0, 2 * Math.PI)
-        context.strokeStyle = '#457394'
+        context.strokeStyle = '#FFFFFF'
         context.stroke()
       }
     })
@@ -858,8 +888,8 @@ $(document).ready(function () {
       })
     }
 
-    monsterArray.forEach(function (mon) {
-      context.drawImage(mon.image, mon.x, mon.y)
+    zombieArray.forEach(function (zombie) {
+      context.drawImage(zombie.image, zombie.x, zombie.y)
     })
   }
 
@@ -869,18 +899,18 @@ $(document).ready(function () {
     var delta = now - then
 
     movePlayers(delta / 1000)
-    moveMonsters()
+    moveZombies()
     checkIfCaught()
     checkIfHasPowerUp()
     updateScore()
     render()
 
-// add more monsters every 3s (1 + 1 monster for every three combined lives lost)
+// add more zombies every 3s (1 + 1 zombie for every three combined lives lost)
     if (refreshCounter % 180 === 0) {
       var numToSpawn = Math.min(2, 12 - (p1.lives + p2.lives))
-      createMonster()
+      createZombie()
       for (i = 0; i <= numToSpawn; i += 2) {
-        createMonster()
+        createZombie()
       }
     }
 
