@@ -728,11 +728,11 @@ $(document).ready(function () {
 
 // update the score
   function updateScore () {
-    // $('.player-info-ba r').text(p1.abilityCharge + ' charges ' + p1.lives + ' : ' + p2.lives + ' charges ' + p2.abilityCharge)
     $('#p1-info-bar .info-player-name').text(p1AbilityArray[characterConfirm[0]].name)
     $('#p1-info-bar .info-ability-name').text(p1AbilityArray[characterConfirm[0]].ability)
     $('#p1-info-bar .info-ability-charge').text(p1.abilityCharge)
     $('#p1-info-bar .info-lives').text(p1.lives)
+
     $('#p2-info-bar .info-player-name').text(p2AbilityArray[characterConfirm[1]].name)
     $('#p2-info-bar .info-ability-name').text(p2AbilityArray[characterConfirm[1]].ability)
     $('#p2-info-bar .info-ability-charge').text(p2.abilityCharge)
@@ -745,7 +745,7 @@ $(document).ready(function () {
     if (refreshCounter % 180 === 0) {
       createZombie()
       // add zombies for every 3 lives lost
-      var spawnWhenHurt = Math.min(3, 13 - (p1.lives + p2.lives))
+      var spawnWhenHurt = Math.min(2, 13 - (p1.lives + p2.lives))
       for (i = 0; i <= spawnWhenHurt; i += 3) {
         createZombie()
       }
@@ -797,7 +797,6 @@ $(document).ready(function () {
 
   // go to game over screen
   function gameOverScreen () {
-    // context.clearRect(0, 0, width, height)
     zombieRoarAudio.play()
     zombieGroupAudio.pause()
     inPursuitAudio.pause()
@@ -815,7 +814,6 @@ $(document).ready(function () {
       p2confirmed = false
       checkConfirm('p2', p2confirmed)
       hasGameStarted = false
-      // $('.player-info-bar').hide()
       // update the front page
       if (p1.lives > 0) {
         console.log(p1AbilityArray[characterConfirm[0]].name)

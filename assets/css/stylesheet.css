@@ -312,7 +312,8 @@ div {
   .changeKey {
     font-size: 12px;
   }
-  /* XXX:
-   */
-  player-info-bar
+
+  player-info-bar {
+    
+  }
 }
