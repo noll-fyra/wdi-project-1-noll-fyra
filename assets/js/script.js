@@ -23,6 +23,8 @@ $(document).ready(function () {
   var zombieGroupAudio = document.querySelector('#zombie-group')
   // plays when the game is running
   var inPursuitAudio = document.querySelector('#in-pursuit')
+  // plays when a player gets a power up
+  var powerUpAudio = document.querySelector('#power-up')
 
 // general game variables
   var p1confirmed = false
@@ -594,6 +596,7 @@ $(document).ready(function () {
       var distance = Math.sqrt(dx * dx + dy * dy)
 
       if (distance < powerUp.radius + player.radius) {
+        powerUpAudio.play()
         powerUpActive = false
         powerUpCounter = 0
         player.abilityCharge += 1
@@ -736,6 +739,24 @@ $(document).ready(function () {
     $('#p2-info-bar .info-lives').text(p2.lives)
   }
 
+// spawn zombies
+  function spawnZombies () {
+    // spawn zombies every 3 seconds
+    if (refreshCounter % 180 === 0) {
+      createZombie()
+      // add zombies for every 3 lives lost
+      var spawnWhenHurt = Math.min(3, 13 - (p1.lives + p2.lives))
+      for (i = 0; i <= spawnWhenHurt; i += 3) {
+        createZombie()
+      }
+      // add 1 zombie for every 15 seconds that has passed
+      var spawnOverTime = Math.floor(refreshCounter / 900)
+      for (i = 0; i <= spawnOverTime; i += 1) {
+        createZombie()
+      }
+    }
+  }
+
 // show the loading screen between the landing page and the game
   function loadGame () {
     zombieRoarAudio.play()
@@ -783,7 +804,7 @@ $(document).ready(function () {
     tenebrousAudio.currentTime = 0
     tenebrousAudio.play()
     $('.canvas-container').css('opacity', '0.0')
-    $('.canvas-container').css('transition', 'opacity 1.5s')
+    $('.canvas-container').css('transition', 'opacity 2s')
     window.setTimeout(function () {
       $('#start-game').css('opacity', '1.0')
       $('.canvas-container').hide()
@@ -805,7 +826,7 @@ $(document).ready(function () {
         $('#one').text(p2AbilityArray[characterConfirm[1]].name)
         $('.tagline').text(p1AbilityArray[characterConfirm[0]].name + deathQuips[Math.floor(Math.random() * deathQuips.length)])
       }
-    }, 1200)
+    }, 2000)
   }
 
   // reset the game when a player is hit or when game is over
@@ -855,8 +876,6 @@ $(document).ready(function () {
       refreshCounter = 0
       powerUpCounter = 0
       powerUpActive = false
-      // reset UI
-      // $('.player-info-bar').show()
     }
   }
 
@@ -925,20 +944,12 @@ $(document).ready(function () {
     var delta = now - then
 
     movePlayers(delta / 1000)
+    spawnZombies()
     moveZombies()
     checkIfCaught()
     checkIfHasPowerUp()
     updateScore()
     render()
-
-// add more zombies every 3s (1 + 1 zombie for every three combined lives lost)
-    if (refreshCounter % 180 === 0) {
-      var numToSpawn = Math.min(2, 12 - (p1.lives + p2.lives))
-      createZombie()
-      for (i = 0; i <= numToSpawn; i += 2) {
-        createZombie()
-      }
-    }
 
 // spawn a powerUp every 10s
     if (powerUpCounter % 600 === 0) {
@@ -953,4 +964,12 @@ $(document).ready(function () {
       window.requestAnimationFrame(gameOverScreen)
     }
   }
+
+  // bonus - ruin the players' lives
+  window.addEventListener('click', function (e) {
+    if (hasGameStarted && !isGameOver) {
+      var zombie = new Zombie(e.clientX - window.innerWidth * 0.05 - spriteWidth / 2, e.clientY - window.innerHeight * 0.1 - spriteHeight * 1.5, randomSpeed())
+      zombieArray.push(zombie)
+    }
+  })
 })
