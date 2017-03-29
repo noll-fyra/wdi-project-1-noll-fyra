@@ -95,7 +95,7 @@ $(document).ready(function () {
 
   function updateBio () {
     $('#p1 .bio-category').text(bioTemplate[characterBio[0]])
-    $('#p1 .bio-quip').text(p2BioArray[characterConfirm[0]][characterBio[0]])
+    $('#p1 .bio-quip').text(p1BioArray[characterConfirm[0]][characterBio[0]])
 
     $('#p2 .bio-category').text(bioTemplate[characterBio[1]])
     $('#p2 .bio-quip').text(p2BioArray[characterConfirm[1]][characterBio[1]])
