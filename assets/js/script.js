@@ -13,6 +13,17 @@ $(document).ready(function () {
   var characterConfirm = [Math.floor(Math.random() * 6), Math.floor(Math.random() * 6)]
   var characterBio = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)]
 
+  // plays on load-game
+  var tenebrousAudio = document.querySelector('#tenebrous')
+  // plays when hit
+  var zombieHitAudio = document.querySelector('#zombie-hit')
+  // plays when the game starts or ends
+  var zombieRoarAudio = document.querySelector('#zombie-roar')
+  // plays when the game is running
+  var zombieGroupAudio = document.querySelector('#zombie-group')
+  // plays when the game is running
+  var inPursuitAudio = document.querySelector('#in-pursuit')
+
 // general game variables
   var p1confirmed = false
   var p2confirmed = false
@@ -82,10 +93,10 @@ $(document).ready(function () {
 
   function updateBio () {
     $('#p1 .bio-category').text(bioTemplate[characterBio[0]])
-    $('#p1 .bio-quip').text(p1BioArray[characterConfirm[0]][characterBio[0]])
+    $('#p1 .bio-quip').text(p2BioArray[characterConfirm[0]][characterBio[0]])
 
     $('#p2 .bio-category').text(bioTemplate[characterBio[1]])
-    $('#p2 .bio-quip').text(p1BioArray[characterConfirm[1]][characterBio[1]])
+    $('#p2 .bio-quip').text(p2BioArray[characterConfirm[1]][characterBio[1]])
   }
 
 // add keyboard eventListeners for start-game screen
@@ -188,6 +199,7 @@ $(document).ready(function () {
       $('#' + player + 'confirm').css('animation', 'steady-confirm')
       $('#' + player + 'confirm').css('background-color', '#FFFFFF')
       $('#' + player + 'confirm').css('color', '#8a0707')
+      $('#p' + player + '.player-name').css('color', '#8a0707')
       $('#' + player + 'up').text('')
       $('#' + player + 'down').text('')
       $('#' + player + 'left').text('')
@@ -726,6 +738,14 @@ $(document).ready(function () {
 
 // show the loading screen between the landing page and the game
   function loadGame () {
+    zombieRoarAudio.play()
+    zombieGroupAudio.currentTime = 0
+    zombieGroupAudio.loop = true
+    zombieGroupAudio.play()
+    inPursuitAudio.currentTime = 0
+    inPursuitAudio.loop = true
+    inPursuitAudio.play()
+    tenebrousAudio.pause()
     resizeCanvas()
     var countdown = 2
     $('#start-game').hide()
@@ -757,6 +777,11 @@ $(document).ready(function () {
   // go to game over screen
   function gameOverScreen () {
     // context.clearRect(0, 0, width, height)
+    zombieRoarAudio.play()
+    zombieGroupAudio.pause()
+    inPursuitAudio.pause()
+    tenebrousAudio.currentTime = 0
+    tenebrousAudio.play()
     $('.canvas-container').css('opacity', '0.0')
     $('.canvas-container').css('transition', 'opacity 1.5s')
     window.setTimeout(function () {
@@ -788,6 +813,7 @@ $(document).ready(function () {
     if (!isGameOver) {
       pArray.forEach(function (player) {
         if (player.hit) {
+          zombieHitAudio.play()
           $('body').css('background-color', '#8a0707')
           $('body').css('transition', 'background-color 0.5s ease-out')
           setTimeout(function () {

@@ -205,5 +205,77 @@ var tajBio = ['Sniper rifle',
   'His dog'
 ]
 
+var annBio = ['Nail clipper',
+  'Oats',
+  'Meat eaters',
+  'Environmental campaigning',
+  'Annoying others',
+  'Flying',
+  '28 Jun 1995',
+  'Raccoon',
+  'Squinting',
+  'Handwritten letters'
+]
+
+var evaBio = ['Katana',
+  'Fried rice',
+  'Jaywalkers',
+  'Catching butterfiles',
+  'Gymnastics',
+  'A better tomorrow',
+  '12 Aug 1989',
+  'Moose',
+  'Snapping fingers',
+  'Her teddy'
+]
+
+var idaBio = ['Shotgun',
+  'Baked beans',
+  'Drunks',
+  'Spelunking',
+  'Card games',
+  'Romance',
+  '19 Jan 2002',
+  'Condor',
+  'Involuntary shivering',
+  'Lex'
+]
+
+var joyBio = ['Smooth stones',
+  'Duck confit',
+  'Boys',
+  'Jogging',
+  'Chemistry',
+  'Living underwater',
+  '23 Dec 2003',
+  'Walrus',
+  'Constant giggling',
+  'Home'
+]
+
+var raeBio = ['Submachine gun',
+  'Dim sum',
+  'Brothers',
+  'Eating',
+  'Interior design',
+  'Travelling abroad',
+  '06 Jul 1991',
+  'Tyrannosaurus Rex',
+  'Waking up early',
+  'Never misses'
+]
+
+var skyBio = ['Spear',
+  'Ceviche',
+  'Loud music',
+  'Reading',
+  'Painting',
+  'A time gone by',
+  '17 Mar 1993',
+  'Armadillo',
+  'Panic attacks',
+  'Childhood'
+]
+
 var p1BioArray = [aliBio, camBio, kaiBio, lexBio, royBio, tajBio]
-var p2BioArray = [aliBio, camBio, kaiBio, lexBio, royBio, tajBio]
+var p2BioArray = [annBio, evaBio, idaBio, joyBio, raeBio, skyBio]
