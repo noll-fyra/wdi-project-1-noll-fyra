@@ -64,7 +64,7 @@ Making a game entertaining can be achieved through careful use of micro-interact
 - The player choice box changes color and the pulsing `<div>` becomes a firm "Ready!" when the key is pressed.
 - A funny but helpful tip is displayed while loading.
 - Getting hit or getting a power up causes the screen to flash for a split second and a sound cue to play.
-- Each character has a different bio to make choosing them more interesting.
+- Each character has a different bio to make them more interesting.
 
 At the end of the day, the game is about more than just its mechanics.
 

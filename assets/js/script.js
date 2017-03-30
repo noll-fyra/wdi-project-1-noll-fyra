@@ -439,13 +439,13 @@ $(document).ready(function () {
   cam.hasOneUp = true
   var kai = new Player(1, 'player')
   kai.hasPhasing = true
-  var lex = new Player(1, 'player')
-  lex.hasBomb = true
+  var max = new Player(1, 'player')
+  max.hasBomb = true
   var roy = new Player(1, 'player')
   roy.hasSpeeding = true
   var taj = new Player(1, 'player')
   taj.hasTeleporting = true
-  var p1Array = [ali, cam, kai, lex, roy, taj]
+  var p1Array = [ali, cam, kai, max, roy, taj]
 
   var ann = new Player(2, 'heroine')
   ann.hasInvincible = true
@@ -763,7 +763,7 @@ $(document).ready(function () {
     zombieGroupAudio.currentTime = 0
     zombieGroupAudio.loop = true
     zombieGroupAudio.play()
-    inPursuitAudio.currentTime = 0
+    inPursuitAudio.currentTime = 7
     inPursuitAudio.loop = true
     inPursuitAudio.play()
     tenebrousAudio.pause()

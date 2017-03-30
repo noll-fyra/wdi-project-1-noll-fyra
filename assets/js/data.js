@@ -19,8 +19,8 @@ var kaiAbility = {
   quip: "Can't pass last night's dinner."
 }
 
-var lexAbility = {
-  name: 'Lex',
+var maxAbility = {
+  name: 'Max',
   ability: 'Bombs',
   description: 'Kill all zombies within a small radius',
   quip: 'Size does matter.'
@@ -82,7 +82,7 @@ var skyAbility = {
   quip: 'Keep your enemies closer.'
 }
 
-var p1AbilityArray = [aliAbility, camAbility, kaiAbility, lexAbility, royAbility, tajAbility]
+var p1AbilityArray = [aliAbility, camAbility, kaiAbility, maxAbility, royAbility, tajAbility]
 var p2AbilityArray = [annAbility, evaAbility, idaAbility, joyAbility, raeAbility, skyAbility]
 
 var tipsQuips = [
@@ -169,15 +169,15 @@ var kaiBio = ['Glock-18',
   'TV'
 ]
 
-var lexBio = ['Hunting knife',
-  'Pad Thai',
-  'Noisy neighbours',
-  'Snail art',
-  'Metalwork',
-  'Nothing',
-  '11 Nov 2002',
-  'Polar bear',
-  'Finger drumming',
+var maxBio = ['Chainsaw',
+  'Chicken McNuggets',
+  'Unenthusiastic people',
+  'Playing catch',
+  'Pyrotechnics',
+  'A quieter world',
+  '01 Oct 1998',
+  'Sloth',
+  'Hopping',
   'Ida'
 ]
 
@@ -199,7 +199,7 @@ var tajBio = ['Sniper rifle',
   'Reading the dictionary',
   'Spelling',
   'Words',
-  '07 Oct 1956',
+  '07 Nov 1956',
   'Dolphin',
   'Correcting other people',
   'His dog'
@@ -238,7 +238,7 @@ var idaBio = ['Shotgun',
   '19 Jan 2002',
   'Condor',
   'Involuntary shivering',
-  'Lex'
+  'Max'
 ]
 
 var joyBio = ['Smooth stones',
@@ -277,5 +277,5 @@ var skyBio = ['Spear',
   'Childhood'
 ]
 
-var p1BioArray = [aliBio, camBio, kaiBio, lexBio, royBio, tajBio]
+var p1BioArray = [aliBio, camBio, kaiBio, maxBio, royBio, tajBio]
 var p2BioArray = [annBio, evaBio, idaBio, joyBio, raeBio, skyBio]
