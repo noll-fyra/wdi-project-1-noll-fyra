@@ -6,7 +6,6 @@
 
 **_Population: One_** is a top-down zombie survival game for two players using the keyboard. The objective is to be the last player standing after a relentless zombie horde attacks. Players have to dodge increasing numbers of zombies as well as fixed obstacles, aided only by a special ability that their chosen character can use. Both players start with 5 lives and 3 ability charges, but if you survive long enough, maybe you can get a power up that will restore a charge, and help you outlast the other player.
 
----
 ## Controls
 ||Player 1 |Player 2
 |:---:|:---:|:---:
@@ -53,10 +52,8 @@ I designed the abilities to each break a rule of the game.
 - **Speeding** changes how much distance a keypress adds to a player's position.
 - **Teleportation** simply changes one player's x-y coordinates to the other player's.
 
----
 ![Population: One Game Screen](http://i.imgur.com/xtVG7dy.png)
 
----
 ### Bringing the Game to Life
 Making a game enjoyable extends to the experience of playing it. Everything that detracts has to go.
 
@@ -82,14 +79,12 @@ Making a game entertaining can be achieved through careful use of micro-interact
 
 At the end of the day, the game is about more than just its mechanics.
 
----
 ![Population: One Menu Screen](http://i.imgur.com/79eNOe5.png)
 
 ---
 ## Getting Started
 Just clone or download this repository to get started right away.
 
----
 ## Built With
 - JavaScript
 - jQuery
@@ -99,15 +94,12 @@ Just clone or download this repository to get started right away.
 
 All references can be found in _index.html_.
 
----
 ## Contributing
 This is not a live project, but feel free to use the code however you like.
 
----
 ## Author
 - Jonathan Louis Ng
 
----
 ## Acknowledgements
 ### Coding assistance:
 - Prima Aulia
