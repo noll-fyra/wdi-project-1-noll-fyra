@@ -263,10 +263,6 @@ div {
   height: 100%;
 }
 
-#ravenous {
-  /*font-family: 'Amatic SC'*/
-}
-
 #countdown {
   color: #8a0707;
   background-color: #FFFFFF;
@@ -299,21 +295,53 @@ div {
 
 @media only screen and (max-width: 800px) {
   * {
-    font-size: 20px;
+    font-size: 12px;
   }
   #population {
     font-size: 40px;
     padding: 0px 0px 0px 12px;
   }
   #one {
-    font-size: 20px;
+    font-size: 40px;
     padding: 0px 8px 0px 8px;
   }
-  .changeKey {
-    font-size: 12px;
+  .tagline {
+    font-size: 16px;
   }
-
-  player-info-bar {
-    
+  #tagline {
+    font-size: 20px;
+  }
+  #be-the-last {
+    font-size: 20px;
+  }
+  .player-last-human {
+    font-size: 20px;
+  }
+  .player-name {
+    font-size: 16px;
+  }
+  .bio {
+    display: none;
+  }
+  .bio-quip {
+    display: flex;
+    color: rgba(0, 0, 0, 0.0);
+  }
+  .ability {
+    display: none;
+  }
+  .ability-name {
+    height: 25%;
+    display: flex;
+    font-size: 16px;
+  }
+  #ravenous {
+    font-size: 28px;
+  }
+  #countdown {
+    font-size: 28px;
+  }
+  #tips {
+    font-size: 16px;
   }
 }
