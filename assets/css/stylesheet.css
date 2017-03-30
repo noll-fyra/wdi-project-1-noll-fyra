@@ -15,10 +15,6 @@ html {
   background-size: cover;
 }
 
-body {
-  /*background-color: #484349;*/
-}
-
 div {
   display: flex;
   flex-flow: column;

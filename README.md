@@ -36,12 +36,12 @@ Zombies spawn randomly along the edges of the `<canvas>`, forcing players to sta
 ### Character Abilities
 I designed the abilities to each break a rule of the game.
 
-- *Invincibility* ignores player-zombie collision.
-- *Life Gain* += 1 to a resource that is otherwise finite.
-- *Phasing* ignores player-obstacle collision.
-- *Bombs* are the only way to remove zombies from the game, and re-implements player-zombie collision.
-- *Speeding* changes how much distance a keypress adds to a player's position.
-- *Teleportation* simply changes one player's x-y coordinates to the other player's.
+- **Invincibility** ignores player-zombie collision.
+- **Life Gain** += 1 to a resource that is otherwise finite.
+- **Phasing** ignores player-obstacle collision.
+- **Bombs** are the only way to remove zombies from the game, and re-implements player-zombie collision.
+- **Speeding** changes how much distance a keypress adds to a player's position.
+- **Teleportation** simply changes one player's x-y coordinates to the other player's.
 
 ### Bringing the Game to Life
 Making a game enjoyable extends to the experience of playing it. Everything that detracts has to go.
