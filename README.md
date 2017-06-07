@@ -1,5 +1,5 @@
 # _Population: One_
-<https://wdi-sg.github.io/wdi-project-1-noll-fyra>
+<https://noll-fyra.github.io/wdi-project-1-noll-fyra>
 
 ## Description
 > A zombie apocalypse has left the human race with only two survivors. Be the last.
