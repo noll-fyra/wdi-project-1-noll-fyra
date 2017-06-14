@@ -71,7 +71,7 @@ Making a game entertaining can be achieved through careful use of micro-interact
 
 - A loading page tells them when the game is going to start rather than throwing the players straight into the fray.
 - A small "bubble" appears around a player whenever they are hit to indicate temporary invulnerability.
-- A humourous death message replaces the tagline when the players return to the starting page.
+- A humorous death message replaces the tagline when the players return to the starting page.
 - The player choice box changes color and the pulsing `<div>` becomes a firm "Ready!" when the key is pressed.
 - A funny but helpful tip is displayed while loading.
 - Getting hit or getting a power up causes the screen to flash for a split second and a sound cue to play.
